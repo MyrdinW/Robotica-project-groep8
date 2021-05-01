@@ -1,28 +1,68 @@
 .bd-placeholder-img {
-    font-size: 1.125rem;
-    text-anchor: middle;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    user-select: none;
-  }
+  font-size: 1.125rem;
+  text-anchor: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+}
 
-  @media (min-width: 768px) {
-    .bd-placeholder-img-lg {
-      font-size: 3.5rem;
-    }
+@media (min-width: 768px) {
+  .bd-placeholder-img-lg {
+    font-size: 3.5rem;
   }
+}
 
-  .test {
-      background-color: #212529;
-      text-align: center;
-      margin-top: 100px;
-  }
+.test {
+    background-color: #212529;
+    text-align: center;
+    margin-top: 100px;
+}
 
-  h1 {
-      color: white;
-  }
+h1 {
+    color: white;
+}
 
-    p {
-      color: white;
-  }
+  p {
+    color: white;
+}
+
+.camera {
+  width: 75%;
+  height: 250px;
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+}
+
+.light {
+  width: 75%;
+  height: 100px;
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+}
+
+.microphone {
+  width: 75%;
+  height: 100px;
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+}
+
+.engine {
+  width: 75%;
+  height: 100%;
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+}
+
+.servo {
+  width: 75%;
+  height: 100%;
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+}
   
