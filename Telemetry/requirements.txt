@@ -1,0 +1,6 @@
+opencv-python
+flask
+flask_cors
+pyaudio
+pylab-sdk
+requests
