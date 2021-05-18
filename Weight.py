@@ -1,11 +1,12 @@
-from hx711 import HX711
+# from hx711 import HX711
 import numpy as np
 
 
 class Weight:
     def __init__(self):
-        self.hx711 = HX711(dout_pin=22, pd_sck_pin=27, channel="A", gain=64)
-        self.hx711.reset()
+        pass
+        # self.hx711 = HX711(dout_pin=22, pd_sck_pin=27, channel="A", gain=64)
+        # self.hx711.reset()
 
     def get_weight(self):
         measures = self.hx711.get_raw_data()

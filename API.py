@@ -21,13 +21,13 @@ camera_obj, servo_obj, remote_obj, light_obj, engine_obj, microphone_obj, weight
 class ActionsView(FlaskView):
     def move(self):
         jsx1, jsx2, jsy1, jsy2 = remote_obj.get_joy_positions()
-        moveCommand = MoveCommand(camera_obj, jsx1, jsy1, jsx2, jsy2)
+        moveCommand = MoveCommand(jsx1, jsy1, jsx2, jsy2)
         moveCommand.excecute()
         return ""
 
     def movegripper(self):
         jsx1, jsx2, jsy1, jsy2 = remote_obj.get_joy_positions()
-        moveGripperCommand = MoveGripperCommand(camera_obj, jsx1, jsy1, jsx2, jsy2)
+        moveGripperCommand = MoveGripperCommand(jsx1, jsy1, jsx2, jsy2)
         moveGripperCommand.excecute()
         return ""
 

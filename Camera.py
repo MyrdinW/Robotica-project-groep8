@@ -1,5 +1,4 @@
 from Part import Part
-import numpy as np
 import cv2
 
 

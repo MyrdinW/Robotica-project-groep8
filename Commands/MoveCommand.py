@@ -5,10 +5,9 @@ from Servo import Servo
 
 class MoveCommand(Command):
 
-    def __init__(self, camera, jsx1, jsy1, jsx2, jsy2):
+    def __init__(self, jsx1, jsy1, jsx2, jsy2):
         self.engine = Engine()
         self.servo = Servo()
-        self.camera = camera
         self.jsx1 = jsx1
         self.jsx2 = jsx2
         self.jsy1 = jsy1

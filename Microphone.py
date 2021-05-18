@@ -18,12 +18,11 @@ class Microphone(Part):
                                        frames_per_buffer=self.chunk))
 
     def get_image(self):
-        t1 = time.time()
         data = np.frombuffer(self.stream.read(self.chunk), dtype=np.int16)
         fig, axis = plt.subplots()
         axis.plot(data, 'r')
         axis.grid()
-        axis.set_ylim([-30000, 30000])
+        axis.set_ylim([-10000, 10000])
         image = io.BytesIO()
         fig.savefig(image, format="jpg")
         image.seek(0)
