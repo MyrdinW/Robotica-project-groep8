@@ -2,34 +2,29 @@ import base64
 import time
 import io
 from Part import Part
-import pylab as plt
-import numpy as np
 import pyaudio
-
+import matplotlib.pyplot as plt
+import matplotlib
+import numpy as np
 
 
 class Microphone(Part):
     def __init__(self):
         super().__init__()
+        matplotlib.use('agg')
         self.output = []
         self.rate = 44100
         self.chunk = int(self.rate / 20)
-        try:
-            self.audio = pyaudio.PyAudio()
-            self.stream = (self.audio.open(format=pyaudio.paInt16, channels=1, rate=self.rate, input=True,
-                                frames_per_buffer=self.chunk))
-        except OSError as e:
-            print(e)
-            
+        self.audio = pyaudio.PyAudio()
+        self.stream = (self.audio.open(format=pyaudio.paInt32, channels=1, rate=self.rate, input=True,
+                                       frames_per_buffer=self.chunk))
 
     def get_image(self):
-        t1 = time.time()
-        data = np.frombuffer(self.stream.read(self.chunk), dtype=np.int16)
-        fig, ax = plt.subplots()
-        ax.plot(data, 'r')
-        # plt.title(i)
-        ax.grid()
-        ax.axis([0, len(data), 0, 2 ** 16 / 2])
+        data = np.frombuffer(self.stream.read(self.chunk, exception_on_overflow = False), dtype=np.int32)
+        fig, axis = plt.subplots()
+        axis.plot(data, 'r')
+        axis.grid()
+        axis.set_ylim([-10000, 10000])
         image = io.BytesIO()
         fig.savefig(image, format="jpg")
         image.seek(0)
