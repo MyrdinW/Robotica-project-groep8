@@ -1,5 +1,5 @@
 from flask import Flask, render_template
-
+import os
 app = Flask(__name__)
 
 
@@ -8,4 +8,15 @@ def index():
     return render_template("index.html")
 
 
+def execfile(param):
+    pass
+
+
+@app.route("/API")
+def api():
+    os.system('python API.py')
+    return render_template("index.html")
+
+
 app.run(port="3000")
+
