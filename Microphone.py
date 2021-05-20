@@ -1,65 +1,53 @@
 import base64
-import time
 import io
-from Part import Part
-import pyaudio
-import pylab as plt
+from pyplot import plt
 import numpy as np
+import pyaudio
 
 
-class Microphone(Part):
+class Microphone:
+    """
+    Microphone handles all actions with the microphone
+    """
+
     def __init__(self):
         super().__init__()
-        self.output = []
-        self.rate = 44100
-        self.chunk = int(self.rate / 20)
-        self.audio = pyaudio.PyAudio()
-        self.stream = (self.audio.open(format=pyaudio.paInt16, channels=1, rate=self.rate, input=True,
-                                       frames_per_buffer=self.chunk))
+        self.__output = []
+        self.__rate = 44100
+        self.__chunk = int(self.__rate / 20)
+        self.__audio = pyaudio.PyAudio()
+        self.__stream = (self.__audio.open(format=pyaudio.paInt16, channels=1, rate=self.__rate, input=True,
+                                           frames_per_buffer=self.__chunk))
         print("Microphone initialized")
 
+    # returns encoded image of sound waves
     def get_image(self):
-        #data = np.frombuffer(self.stream.read(self.chunk), dtype=np.int16)
-        #fig, axis = plt.subplots()
-        #axis.plot(data, 'r')
-        #axis.grid()
-        #axis.set_ylim([-10000, 10000])
-        #image = io.BytesIO()
-        #fig.savefig(image, format="jpg")
-        #image.seek(0)
-        #encoded_image = base64.b64encode(image.read())
-        #return encoded_image
-        return ""
+        data = np.frombuffer(self.__stream.read(self.__chunk), dtype=np.int16)
+        fig, axis = plt.subplots()
+        axis.plot(data, 'r')
+        axis.grid()
+        axis.set_ylim([-10000, 10000])
+        image = io.BytesIO()
+        fig.savefig(image, format="jpg")
+        image.seek(0)
+        encoded_image = base64.b64encode(image.read())
+        return encoded_image
 
-    def get_output(self):
-        return self.output
-    
-    def get_maxlights(self):
-        print("max lights")
-        data = np.frombuffer(self.stream.read(self.chunk),dtype=np.int16)
-        #data = ((data/np.power(2.0,15))*5.25)*(mic_sens_corr) 
-        peak_low = 0 
-        peak_mid = 0 
-        peak_high = 0
-        for i in range (0,200,1):
-            if data[i] > data[i-1]: 
-                peak_low = data[i]
-        for i in range (201,2000,1):
-            if data[i] > data[i-1]: 
-                peak_mid = data[i]
-        for i in range (2001,len(data),1):
-            if data[i] > data[i-1]: 
-                peak_high = data[i]    
-        max_leds_low=abs(1*int(100*peak_low/2**15))
-        max_leds_mid=abs(1*int(100*peak_mid/2**15)) 
-        max_leds_high=abs(1*int(100*peak_high/2**15)) 
-        if max_leds_low > 5:
-            max_leds_low = 5
-        if max_leds_mid > 5:
-            max_leds_mid = 5
-        if max_leds_high > 5:
-            max_leds_high = 5
-        return max_leds_low, max_leds_mid, max_leds_high
-    
-    def operation(self):
-        pass
+    # Gets amounts of lights to be on for each frequency range
+    def get_max_lights(self):
+        data = np.frombuffer(self.__stream.read(self.__chunk), dtype=np.int16)
+        peak_low = max(data[:200])
+        peak_mid = max(data[200:2000])
+        peak_high = max(data[2000:])
+
+        leds_low = self.get_amount(peak_low)
+        leds_mid = self.get_amount(peak_mid)
+        leds_high = self.get_amount(peak_high)
+        return leds_low, leds_mid, leds_high
+
+    # return amount of lights according to peak of  each frequency range
+    def get_amount(self, peak):
+        lights = abs(1 * int(100 * peak / 2 ** 15))
+        if lights > 5:
+            return 5
+        return lights

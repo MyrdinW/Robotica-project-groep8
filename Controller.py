@@ -1,41 +1,38 @@
+import datetime
+import threading
+import time
+
 from Camera import Camera
 from Engine import Engine
 from Light import Light
 from Microphone import Microphone
 from Receiver import Receiver
-from Remote import Remote
 from Servo import Servo
 from Weight import Weight
-import threading
-import time
-import RPi.GPIO as gpio
-import datetime
+
 
 class Controller:
+    """
+        Controller handles all actions of the robot as a whole.
+        It acts as a facade that handles all components
+    """
+
     def __init__(self):
-
-    
-        self.task = False
-        self.remote = Remote()
-        self.engine = Engine(3,2,4)
-        self.servo = Servo()
-
-        self.microphone = Microphone()
-
-        self.light = Light()
-        
-        self.camera = Camera()
-        # self.camera = None
-        print("succeed")
-        self.weight = Weight()
-        print("Starting listener")
-        self.receiver = Receiver(self.camera, self.microphone)
+        self.__task = False
+        self.__engine = Engine(3, 2, 4)
+        self.__servo = Servo()
+        self.__microphone = Microphone()
+        self.__light = Light()
+        self.__camera = Camera()
+        self.__weight = Weight()
+        self.__receiver = Receiver(self.__camera, self.__microphone)
         threading.Thread(target=self.listen).start()
-        threading.Thread(target=self.dance).start()
-    
+        # threading.Thread(target=self.dance).start()
+
+    # Listens for command from the remote
     def listen(self):
         while True:
-            command = self.receiver.listen()
+            command = self.__receiver.listen()
             if command is not None:
                 words = command.split()
                 if words[0] == "move":
@@ -43,28 +40,28 @@ class Controller:
                 elif words[0] == "movegripper":
                     self.movegripper(words[1], words[2])
             time.sleep(0.1)
-    
-    def movegripper(self, jsx1, jsy1):
+
+    # Moves gripper with x and y value of joystick
+    def movegripper(self, x, y):
         print("Moving gripper")
-    
+
+    # Moves robot with x and y value of joystick
     def move(self, jsx1, jsy1):
-        print("movecommand:",jsx1,jsy1)
-        value = (int(jsx1) - 2048)/2048
-        if value < -0.02 and value > -0.06:
+        value = (int(jsx1) - 2048) / 2048
+        if -0.02 > value > -0.06:
             value = 0
-        print(value)
-        self.engine.set_value(value)
-        self.stop = False
-    
+        self.__engine.set_value(value)
+
+    # Robot dance command
     def dance(self):
-        print("mic started")
         timedelta = datetime.timedelta(seconds=10)
         timeend = datetime.datetime.now() + timedelta
         while datetime.datetime.now() < timeend:
-            low, mid, high = self.microphone.get_maxlights()
-            self.light.set_values(low, mid, high)
-        self.light.reset_lights()
+            low, mid, high = self.__microphone.get_max_lights()
+            self.__light.set_values(low, mid, high)
+        self.__light.reset_lights()
         print("mic stopped")
-    
+
+    # returns all components
     def get_components(self):
-        return self.camera, self.servo, self.remote, self.light, self.engine, self.microphone, self.weight
+        return self.__camera, self.__servo, self.__light, self.__engine, self.__microphone, self.__weight

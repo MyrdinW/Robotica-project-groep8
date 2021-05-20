@@ -1,43 +1,53 @@
 import RPi.GPIO as gpio
 
+
 class Engine:
-   
-    
-    def __init__(self, pin1, pin2, pin3):
-        self.pwmpin = pin1
-        self.fpin = pin2
-        self.bpin = pin3
+
+    def __init__(self, pwmpin, fpin, bpin):
+        """
+
+        :param pwmpin:
+        :param fpin:
+        :param bpin:
+        """
+        self.__pwmpin = pwmpin
+        self.__fpin = fpin
+        self.__bpin = bpin
         gpio.setmode(gpio.BCM)
-        gpio.setup(pin1, gpio.OUT)
-        gpio.setup(pin2, gpio.OUT)
-        gpio.setup(pin3, gpio.OUT)
-        self.p = gpio.PWM(self.pwmpin, 8000)
+        gpio.setup(pwmpin, gpio.OUT)
+        gpio.setup(fpin, gpio.OUT)
+        gpio.setup(bpin, gpio.OUT)
+        self.p = gpio.PWM(pwmpin, 8000)
         self.p.start(0)
         self.offset = 0
         self.value = 0
         print("motor initialized")
 
+    # Changes motor value according to values from
     def set_value(self, value):
         self.value = value
         if value == 0:
-            gpio.output(self.fpin, 0)
-            gpio.output(self.bpin, 0)
+            gpio.output(self.__fpin, 0)
+            gpio.output(self.__bpin, 0)
         if value > 0:
-            gpio.output(self.fpin, 1)
-            gpio.output(self.bpin, 0)
-            self.p.ChangeDutyCycle(100*value)
+            gpio.output(self.__fpin, 1)
+            gpio.output(self.__bpin, 0)
+            self.p.ChangeDutyCycle(100 * value)
         if value < 0:
-            gpio.output(self.bpin, 1)
-            gpio.output(self.fpin, 0)
-            self.p.ChangeDutyCycle(100*value*-1)
-        print (self.value)
+            gpio.output(self.__bpin, 1)
+            gpio.output(self.__fpin, 0)
+            self.p.ChangeDutyCycle(100 * value * -1)
 
+    # returns value of engine
     def get_value(self):
         return self.value
 
     def set_offset(self, offset):
+        """
+        Args:
+            offset:
+        """
         self.offset = offset
 
     def get_offset(self):
         return self.offset
-

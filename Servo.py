@@ -4,12 +4,20 @@ class Servo:
         self.value = 0
 
     def set_value(self, value):
-        self.value =value
+        """
+        Args:
+            value:
+        """
+        self.value = value
 
     def get_value(self):
         return self.value
 
     def set_torque(self, torque):
+        """
+        Args:
+            torque:
+        """
         self.torque = torque
 
     def get_torque(self):
