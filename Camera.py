@@ -1,18 +1,24 @@
-from Part import Part
 import cv2
 
 
-class Camera(Part):
+class Camera:
+    """
+        Class to handle camera actions
+    """
+
     def __init__(self):
         super().__init__()
-        self.camera = cv2.VideoCapture(0)
+        self.__camera = cv2.VideoCapture(0)
         print("Camera initialized")
 
+    # returns image array
     def get_image(self):
-        return self.camera.read()
-    
+        return self.__camera.read()
+
+    # returns left/right of the middle with how many pixels to the middle and
+    # up/down of the middle with how many pixels to the middle
     def get_line(self):
-        img, _ = self.camera.read()
+        img, _ = self.__camera.read()
         hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
         lower_blue = np.array([80, 100, 100])
@@ -58,8 +64,5 @@ class Camera(Part):
                     return "right", cx - width / 2, "up", height / 2 - cy
                 else:
                     return "right", cx - width / 2, "down", cy - height / 2
-
-            # if cv2.waitKey(1) & 0xFF == ord('q'):
-            #     break
         except:
             pass
