@@ -9,6 +9,7 @@ class Weight:
         print("Weight init")
 
     def get_weight(self):
+        # print("Weighting")
         measures = self.hx711.get_raw_data()
         measures = np.asarray(measures)
         results = []
