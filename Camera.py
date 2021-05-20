@@ -8,7 +8,7 @@ class Camera:
 
     def __init__(self):
         super().__init__()
-        self.__camera = cv2.VideoCapture(0)
+        self.__camera = cv2.VideoCapture(-1)
         print("Camera initialized")
 
     # returns image array

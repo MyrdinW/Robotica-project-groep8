@@ -3,14 +3,14 @@ import cv2
 from flask import Flask, jsonify
 from flask_classful import FlaskView
 from flask_cors import CORS
-
+import warnings
 from Controller import Controller
 
 app = Flask(__name__)
 CORS(app)
 controller = Controller()
 camera_obj, servo_obj, light_obj, engine_obj, microphone_obj, weight_obj = controller.get_components()
-
+warnings.filterwarnings("ignore")
 
 class ComponentsView(FlaskView):
     """
@@ -31,7 +31,7 @@ class ComponentsView(FlaskView):
 
     # returns value of led lights
     def light(self):
-        return jsonify(light=light_obj.get_value())
+        return jsonify(light=light_obj.get_lights())
 
     # returns value and torgue of servo
     def servo(self):

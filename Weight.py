@@ -18,4 +18,4 @@ class Weight:
         for measure in measures:
             results.append((measure + 98889) / -548)
         print(str(np.average(results)) + "g")
-        return np.average(results)
+        return str(np.average(results)) + "g"

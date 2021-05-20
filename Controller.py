@@ -22,12 +22,12 @@ class Controller:
         self.__engine = Engine(3, 2, 4)
         self.__servo = Servo()
         self.__microphone = Microphone()
-        self.__light = Light()
+        self.__light = Light(15)
         self.__camera = Camera()
         self.__weight = Weight()
         self.__receiver = Receiver(self.__camera, self.__microphone)
         threading.Thread(target=self.listen).start()
-        # threading.Thread(target=self.dance).start()
+        threading.Thread(target=self.dance).start()
 
     # Listens for command from the remote
     def listen(self):
@@ -54,7 +54,8 @@ class Controller:
 
     # Robot dance command
     def dance(self):
-        timedelta = datetime.timedelta(seconds=10)
+        print("dance started")
+        timedelta = datetime.timedelta(minutes=100)
         timeend = datetime.datetime.now() + timedelta
         while datetime.datetime.now() < timeend:
             low, mid, high = self.__microphone.get_max_lights()

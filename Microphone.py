@@ -1,6 +1,6 @@
 import base64
 import io
-from pyplot import plt
+import matplotlib.pyplot as plt
 import numpy as np
 import pyaudio
 

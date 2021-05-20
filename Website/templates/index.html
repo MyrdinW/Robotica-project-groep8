@@ -13,32 +13,29 @@
 </head>
 
 <script type="text/javascript">
-    var intervalID = setInterval(update_values, 20);
+    var intervalID = setInterval(update_values, 200);
     function update_values() {
       $.getJSON("http://127.0.0.1:5000/api/light/",
           function (data) {
             $('#light').text(data.light)
-            console.log(data)
           });
 
     $.getJSON("http://127.0.0.1:5000/api/weight/",
       function (data) {
         $('#weight').text(data.weight)
-        console.log(data)
+        console.log(data.weight)
       });
 
       $.getJSON("http://127.0.0.1:5000/api/engine/",
         function (data) {
           $('#engine_value').text(data.engine_value)
           $('#engine_offset').text(data.engine_offset)
-          console.log(data)
         });
 
       $.getJSON("http://127.0.0.1:5000/api/servo/",
         function (data) {
           $('#servo_value').text(data.servo_value)
           $('#servo_torque').text(data.servo_torque)
-          console.log(data)
         });
 
       $.get("http://127.0.0.1:5000/api/camera/",
@@ -46,7 +43,6 @@
         var image = new Image();
           var base64enc = "data:image/jpg;base64,";
           var string = base64enc + data;
-          console.log(string)
           image.src = string
           $('#camera').attr('src', string);
         });
@@ -57,7 +53,6 @@
         var image = new Image();
           var base64enc = "data:image/jpg;base64,";
           var string = base64enc + data;
-          console.log(string)
           image.src = string
           $('#microphone').attr('src', string);
         });
@@ -121,8 +116,11 @@
 
   <!--Weight-->
   <div class="weight">
-    <p>Microphone</p>
-    <img margin="0 auto" id="weight" src="" alt=""/>
+    <p>Weight
+    <span id="weight">
+        <script>document.getElementById("weight").innerHTML</script>
+    </span>
+   </p>
   </div>
 
   <script>
