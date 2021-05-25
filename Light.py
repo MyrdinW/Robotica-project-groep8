@@ -57,7 +57,6 @@ class Light:
                 self.__pixels[i + self.__high] = self.__colors.get(i)
         
         self.__pixels.show()
-        # time.sleep(1)
 
     def reset_lights(self):
         for i in range(self.__num_pixels):

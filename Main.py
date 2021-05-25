@@ -12,6 +12,7 @@ controller = Controller()
 camera_obj, servo_obj, light_obj, engine_obj, microphone_obj, weight_obj = controller.get_components()
 warnings.filterwarnings("ignore")
 
+
 class ComponentsView(FlaskView):
     """
     API website to retieve component values for telemetry site

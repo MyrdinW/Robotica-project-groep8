@@ -14,7 +14,7 @@ def execfile(param):
 
 @app.route("/API")
 def api():
-    os.system('python API.py')
+    os.system('python Main.py')
     return render_template("index.html")
 
 
