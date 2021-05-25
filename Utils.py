@@ -4,6 +4,8 @@ import cv2
 dist_pix = 300
 
 
+# returns left/right of the middle with how many pixels to the middle and
+# up/down of the middle with how many pixels to the middle
 def get_distance_blue(img):
     hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 

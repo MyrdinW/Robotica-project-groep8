@@ -14,26 +14,25 @@ class Light:
         self.__order = neopixel.RGBW
         self.__pixels = neopixel.NeoPixel(self.__pixel_pin, self.__num_pixels, brightness=0.2, auto_write=False,
                                           pixel_order=self.__order)
-        
-        low = [0,1,2,5,6,7,10,11,12]
-        mid= [3,8,13]
-        high =[4,9,14]
+
+        low = [0, 1, 2, 5, 6, 7, 10, 11, 12]
+        mid = [3, 8, 13]
+        high = [4, 9, 14]
         self.__colors = {}
-        
+
         for i in low:
             self.__colors.update({i: (255, 0, 0, 0)})
-            
+
         for i in mid:
-           self.__colors.update({i: (255, 255, 0, 0)})
-        
+            self.__colors.update({i: (255, 255, 0, 0)})
+
         for i in high:
             self.__colors.update({i: (0, 255, 0, 0)})
 
-        self.__leds = leds   
+        self.__leds = leds
         self.__low = 0
         self.__mid = int(self.__leds / 3)
         self.__high = int((self.__leds / 3) * 2)
-        
 
         print("Light initalized")
 
@@ -55,7 +54,7 @@ class Light:
                 self.__pixels[i + self.__mid] = self.__colors.get(i)
             if high >= i:
                 self.__pixels[i + self.__high] = self.__colors.get(i)
-        
+
         self.__pixels.show()
 
     def reset_lights(self):

@@ -9,6 +9,7 @@ from Microphone import Microphone
 from Receiver import Receiver
 from Servo import Servo
 from Weight import Weight
+from Utils import *
 
 
 class Controller:
