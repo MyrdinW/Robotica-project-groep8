@@ -3,6 +3,7 @@ import io
 import matplotlib.pyplot as plt
 import numpy as np
 import pyaudio
+import Robotconfig 
 
 
 class Microphone:
@@ -12,9 +13,7 @@ class Microphone:
 
     def __init__(self):
         super().__init__()
-        self.__output = []
         self.__rate = 44100
-        self.__sens = 100
         self.__chunk = int(self.__rate / 20)
         self.__audio = pyaudio.PyAudio()
         self.__stream = (self.__audio.open(format=pyaudio.paInt16, channels=1, rate=self.__rate, input=True,
@@ -48,7 +47,7 @@ class Microphone:
 
     # return amount of lights according to peak of  each frequency range
     def get_amount(self, peak):
-        lights = abs(1 * int(self.__sens * peak / 2 ** 15))
+        lights = abs(1 * int(Robotconfig.microphone['sensitivity'] * peak / 2 ** 15))
         if lights > 5:
             return 5
         return lights
