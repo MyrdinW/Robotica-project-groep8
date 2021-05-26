@@ -9,7 +9,7 @@ from Controller import Controller
 app = Flask(__name__)
 CORS(app)
 controller = Controller()
-camera_obj, servo_obj, light_obj, engine_obj, microphone_obj, weight_obj = controller.get_components()
+camera_obj, servo_obj, light_obj, engine1_obj, engine2_obj, microphone_obj, weight_obj = controller.get_components()
 warnings.filterwarnings("ignore")
 
 
@@ -40,7 +40,11 @@ class ComponentsView(FlaskView):
 
     # returns value and torgue of engine
     def engine(self):
-        return jsonify(engine_value=engine_obj.get_value(), engine_offset=engine_obj.get_offset())
+        return jsonify(engine1_value=engine_obj.get_value(), engine_offset=engine1_obj.get_offset())
+    
+    # returns value and torgue of engine
+    def engine(self):
+        return jsonify(engine2_value=engine_obj.get_value(), engine_offset=engine2_obj.get_offset())
 
     # returns weight in grams
     def weight(self):
