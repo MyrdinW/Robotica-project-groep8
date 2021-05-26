@@ -1,27 +1,31 @@
 class LineDance:
     """
-    Linedance provides all movements initialized per # of led's according to the sound through microphone
+    LineDance returns values needed for movement according to the peaks on low frequencies 
+    through the # of leds, which references to a so called beat. 
+    (Needs upgrade according to addition of gripper)
     """
 
-    def get_movement(i):
-        switcher={
-            0: 'beweging 1',
-            1: 'beweging 2',
-            2: 'beweging 3',
-            3: 'beweging 4',
-            4: 'beweging 5',
-            5: 'beweging 6',
-            6: 'beweging 7',
-            7: 'beweging 8',
-            8: 'beweging 9',
-            9: 'beweging 10',
-            10: 'beweging 11',
-            11: 'beweging 12',
-            12: 'beweging 13',
-            13: 'beweging 14',
-            14: 'beweging 15',
-            15: 'beweging 16'
-        }
-        return switcher.get(i,"Invalid input")
+    def __init__(self):
+        super().__init__()
+        print("Dance initialized")
 
-    
+    def get_movement(self,i,x,y):
+        movement = (0,0)
+
+        if i >= 4:
+            if x >= 0 and y >= 0:
+                movement = (-1, -1)
+                print("moving to the back")
+
+            elif x >= 0 and y < 0:
+                movement = (-1, 1)
+                print("moving to the left")
+
+            elif x < 0 and y >= 0:
+                movement = (1, -1)
+                print("moving to the right")
+
+            else:
+                movement = (1, 1)
+                print("moving forward")
+        return movement
