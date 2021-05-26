@@ -56,7 +56,11 @@ class Controller:
         print("Moving gripper")
 
     # Moves robot with x and y value of joystick
-    def move(self, jsx1, jsy1):
+    def move(self, speed = 0, direction = 0):
+        self.__engine1.set_value(speed + direction)
+        self.__engine2.set_value(speed - direction)
+        
+        
         value = (int(jsx1) - 2048) / 2048
         if -0.02 > value > -0.06:
             value = 0

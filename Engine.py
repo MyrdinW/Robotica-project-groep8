@@ -29,10 +29,16 @@ class Engine:
             gpio.output(self.__fpin, 0)
             gpio.output(self.__bpin, 0)
         if value > 0:
+            if value > 1:
+                value = 1
+                
             gpio.output(self.__fpin, 1)
             gpio.output(self.__bpin, 0)
             self.p.ChangeDutyCycle(100 * value)
         if value < 0:
+            if value < -1:
+                value = -1
+                
             gpio.output(self.__bpin, 1)
             gpio.output(self.__fpin, 0)
             self.p.ChangeDutyCycle(100 * value * -1)
