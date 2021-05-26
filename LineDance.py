@@ -27,5 +27,5 @@ class LineDance:
 
             else:
                 movement = (1, 1)
-                "moving forward"
+                print("moving forward")
         return movement
