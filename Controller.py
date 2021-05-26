@@ -20,7 +20,7 @@ class Controller:
         It acts as a facade that handles all components
     """
 
-    def __init__(self):
+    def __init__(self):s
         self.__task = False
         self.__engine = Engine(3, 2, 4)
         self.__servo = Servo()
