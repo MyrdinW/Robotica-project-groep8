@@ -9,7 +9,7 @@ class Receiver:
     """
     Handles remote signals
     """
-    def __init__(self, camera, microphone):
+    def __init__(self):
         parser = argparse.ArgumentParser(prog="Receiver.py", description="Simple NRF24 Receiver Example.")
         parser.add_argument('-n', '--hostname', type=str, default='localhost',
                             help="Hostname for the Raspberry running the pigpio daemon.")
@@ -21,8 +21,6 @@ class Receiver:
         self.hostname = self.args.hostname
         self.port = self.args.port
         self.address = self.args.address
-        self.camera = camera
-        self.microphone = microphone
 
         if not (2 < len(self.address) < 6):
             print(f'Invalid address {self.address}. Addresses must be between 3 and 5 ASCII characters.')
