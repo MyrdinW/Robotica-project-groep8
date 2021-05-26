@@ -26,7 +26,8 @@ class Controller:
 
     def __init__(self):
         self.__task = False
-        self.__engine = Engine(3, 2, 4)
+        self.__engine1 = Engine(3, 4, 2)
+        self.__engine2 = Engine(27, 17, 22)
         self.__servo = Servo()
         self.__microphone = Microphone()
         self.__light = Light(15)
@@ -37,7 +38,7 @@ class Controller:
             self.__weight = Weight()
         except:
             print("weight failed")
-        self.__receiver = Receiver()
+        #self.__receiver = Receiver()
         #threading.Thread(target=self.listen).start()
         threading.Thread(target=self.listentolaptop).start()
         print("controller")
@@ -97,4 +98,4 @@ class Controller:
 
     # returns all components
     def get_components(self):
-        return self.__camera, self.__servo, self.__light, self.__engine, self.__microphone, self.__weight
+        return self.__camera, self.__servo, self.__light, self.__engine1, self.__engine1, self.__microphone, self.__weight
