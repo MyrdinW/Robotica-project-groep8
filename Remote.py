@@ -29,6 +29,11 @@ class Remote:
         lefttrack = self.calc_value(1)
         righttrack = self.calc_value(3)
         return [lefttrack, righttrack]
+    
+    def get_move_positions(self):
+        speed = self.calc_value(1)
+        direction = self.calc_value(2)
+        return [speed, direction]
 
     def get_joy_positions(self):
         return self.__positions

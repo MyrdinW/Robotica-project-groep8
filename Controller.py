@@ -49,7 +49,8 @@ class Controller:
                 self.__Remote.set_joy_positions([val[1], val[2], val[3], val[4]])
                 if val[0] == "move":
                     self.move_track_control(Remote.get_move_positions_track_control())
-
+                    #self.move(Remote.get_move_positions)
+                    
                 elif val[0] == "movegripper":
                     self.movegripper(val[1], val[2])
             
