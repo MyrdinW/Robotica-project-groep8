@@ -12,7 +12,7 @@ from Receiver import Receiver
 from Servo import Servo
 from Weight import Weight
 from Weight_fake import Weight_fake
-from Utils import *
+from Utils import Utils
 
 
 class Controller:
@@ -22,6 +22,7 @@ class Controller:
     """
 
     def __init__(self):
+        self.utils = Utils()
         self.__task = False
         self.__engine = Engine(3, 2, 4)
         self.__servo = Servo()
@@ -29,6 +30,7 @@ class Controller:
         self.__light = Light(15)
         self.__camera = Camera()
         self.__Remote = Remote()
+        self.__battery = Battery()
         try:
             self.__weight = Weight()
         except:
@@ -85,4 +87,4 @@ class Controller:
 
     # returns all components
     def get_components(self):
-        return self.__camera, self.__servo, self.__light, self.__engine, self.__microphone, self.__weight
+        return self.__camera, self.__battery, self.__servo, self.__light, self.__engine, self.__microphone, self.__weight

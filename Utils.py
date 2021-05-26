@@ -9,10 +9,10 @@ dist_pix = 300
 
 class Utils:
     def __init__(self):
-        self.maskNet = load_model("mask_detector.model")
+        self.maskNet = load_model("/home/pi/x/Robotica-project-groep8/models/mask_detector.model")
         # load dataset
-        prototxtPath = "/models/deploy.prototxt"
-        weightsPath = "/models/res10_300x300_ssd_iter_140000.caffemodel"
+        prototxtPath = r"/models/deploy.prototxt"
+        weightsPath = r"/models/res10_300x300_ssd_iter_140000.caffemodel"
         self.faceNet = cv2.dnn.readNet(prototxtPath, weightsPath)
         
     # returns left/right of the middle with how many pixels to the middle and
@@ -120,6 +120,6 @@ class Utils:
             (startX, startY, endX, endY) = box
             (mask, withoutMask) = pred
         
-        if mask < withoutMask:
-            playsound.playsound("sounds/shallnotpass.wav")
-            break
+            if mask < withoutMask:
+                playsound.playsound("sounds/shallnotpass.wav")
+                break

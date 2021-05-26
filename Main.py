@@ -9,7 +9,7 @@ from Controller import Controller
 app = Flask(__name__)
 CORS(app)
 controller = Controller()
-camera_obj, servo_obj, light_obj, engine_obj, microphone_obj, weight_obj = controller.get_components()
+camera_obj, battery_obj, servo_obj, light_obj, engine_obj, microphone_obj, weight_obj = controller.get_components()
 warnings.filterwarnings("ignore")
 
 
@@ -33,6 +33,10 @@ class ComponentsView(FlaskView):
     # returns value of led lights
     def light(self):
         return jsonify(light=light_obj.get_lights())
+
+    # returns value of led lights
+    def battery(self):
+        return jsonify(voltage=battery_obj.get_voltage())
 
     # returns value and torgue of servo
     def servo(self):
