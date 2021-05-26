@@ -9,7 +9,6 @@ class Engine:
         :param fpin:
         :param bpin:
         """
-        self.__pwmpin = pwmpin
         self.__fpin = fpin
         self.__bpin = bpin
         gpio.setmode(gpio.BCM)
@@ -24,10 +23,11 @@ class Engine:
 
     # Changes motor value according to values from
     def set_value(self, value):
-        self.value = value
+        self.value = value + self.offset
         if value == 0:
             gpio.output(self.__fpin, 0)
             gpio.output(self.__bpin, 0)
+
         if value > 0:
             if value > 1:
                 value = 1
@@ -35,6 +35,7 @@ class Engine:
             gpio.output(self.__fpin, 1)
             gpio.output(self.__bpin, 0)
             self.p.ChangeDutyCycle(100 * value)
+
         if value < 0:
             if value < -1:
                 value = -1
