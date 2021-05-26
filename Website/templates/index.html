@@ -25,6 +25,12 @@
         $('#weight').text(data.weight)
         console.log(data.weight)
       });
+      
+  $.getJSON("http://127.0.0.1:5000/api/battery/",
+      function (data) {
+        $('#battery').text(data.voltage)
+        console.log(data.voltage)
+      });
 
       $.getJSON("http://127.0.0.1:5000/api/engine/",
         function (data) {
