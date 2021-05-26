@@ -10,8 +10,12 @@ from Microphone import Microphone
 from Receiver import Receiver
 from Servo import Servo
 from Weight import Weight
-from Weight_fake import Weight_fake
 from Utils import *
+
+from Weight_fake import Weight_fake
+from LaptopReceiver import LaptopReceiver
+
+
 
 
 class Controller:
@@ -28,12 +32,14 @@ class Controller:
         self.__light = Light(15)
         self.__camera = Camera()
         self.__Remote = Remote()
+        self.__LaptopReceiver = LaptopReceiver()
         try:
             self.__weight = Weight()
         except:
             print("weight failed")
         self.__receiver = Receiver()
-        threading.Thread(target=self.listen).start()
+        #threading.Thread(target=self.listen).start()
+        threading.Thread(target=self.listentolaptop).start()
         print("controller")
         #threading.Thread(target=self.dance).start()
         #self.__engine.set_value(0.1)
@@ -53,7 +59,16 @@ class Controller:
                     
                 elif val[0] == "movegripper":
                     self.movegripper(val[1], val[2])
-            
+
+    def listentolaptop(self):
+        while True:
+            response = self.__LaptopReceiver.listen()
+            if response is not None:
+                self.move(response[0], response[1])
+
+
+
+
 
     # Moves gripper with x and y value of joystick
     def movegripper(self, x, y):
