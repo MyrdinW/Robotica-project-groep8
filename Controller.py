@@ -1,6 +1,7 @@
 import datetime
 import threading
 import time
+import playsound
 
 from Camera import Camera
 from Engine import Engine
@@ -34,12 +35,11 @@ class Controller:
             print("weight failed")
         self.__receiver = Receiver()
         threading.Thread(target=self.listen).start()
+        self.sound()
         print("controller")
         #threading.Thread(target=self.dance).start()
         #self.__engine.set_value(0.1)
         
-        
-
     # Listens for command from the remote
     def listen(self):
         while True:
@@ -79,6 +79,9 @@ class Controller:
             self.__light.set_values(low, mid, high)
         self.__light.reset_lights()
         print("mic stopped")
+    
+    def sound(self):
+        playsound.playsound("sounds/shallnotpass.wav")
 
     # returns all components
     def get_components(self):
