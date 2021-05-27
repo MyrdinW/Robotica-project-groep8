@@ -14,5 +14,8 @@ class Camera:
     # returns image array
     def get_image(self):
         return self.__camera.read()
+    
+    def close_video(self):
+        self.__camera.release()
 
 

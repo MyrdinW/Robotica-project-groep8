@@ -1,7 +1,7 @@
 import datetime
 import threading
 import time
-
+import imutils
 from Camera import Camera
 from Engine import Engine
 from Remote import Remote
@@ -10,13 +10,10 @@ from Microphone import Microphone
 from Receiver import Receiver
 from Servo import Servo
 from Weight import Weight
-from Utils import *
-
+from Utils import Utils
+import cv2
 from Weight_fake import Weight_fake
 from LaptopReceiver import LaptopReceiver
-
-
-
 
 class Controller:
     """
@@ -24,7 +21,7 @@ class Controller:
         It acts as a facade that handles all components
     """
 
-    def __init__(self):s
+    def __init__(self):
         self.__task = False
         self.__engine1 = Engine(3, 4, 2)
         self.__engine2 = Engine(27, 17, 22)
@@ -32,21 +29,77 @@ class Controller:
         self.__microphone = Microphone()
         self.__light = Light(15)
         self.__camera = Camera()
+        print("Utils starting")
+        self.__utils = Utils()
+        print("Utils finished")
         self.__Remote = Remote()
-        self.__LaptopReceiver = LaptopReceiver()
+        #self.__LaptopReceiver = LaptopReceiver()
         try:
             self.__weight = Weight()
         except:
             print("weight failed")
         #self.__receiver = Receiver()
         #threading.Thread(target=self.listen).start()
-        threading.Thread(target=self.listentolaptop).start()
+        #threading.Thread(target=self.listentolaptop).start()
         print("controller")
+        self.mask()
         #threading.Thread(target=self.dance).start()
         #self.__engine.set_value(0.1)
         
-        
+    def followline(self):
+        for i in range(1000):
+            _, frame = self.__camera.get_image()
+            # print(frame)
+            try:
+                output = self.__utils.get_distance_blue(frame)
+                print(output)
+                if output[0] == "left":
+                    print("going left")
+                    # self.move_track_control(-1, 1)
+                elif output[0] == "right":
+                    print("going right")
+                    # self.move_track_control(1, -1)
+            except:
+                pass
+        self.__camera.close_video()
+        cv2.destroyAllWindows()
+        # exit()
+    
+    def mask(self):
+        for i in range(50):
+            _, frame = self.__camera.get_image()
+            frame = imutils.resize(frame, width=800)
+            try:
+                locs, preds = self.__utils.detect_and_predict_mask(frame)
 
+                for (box, pred) in zip(locs, preds):
+                    (startX, startY, endX, endY) = box
+                    (mask, withoutMask) = pred
+
+                    label = "Mask" if mask > withoutMask else "No Mask"
+                    if mask < withoutMask:
+                        print("No mask")
+                    else:
+                        print("Mask")
+                        # threading.Thread(target=playsound.playsound("shall.mp3")).start()
+
+                    color = (0, 255, 0) if label == "Mask" else (0, 0, 255)
+
+                    label = "{}: {:.2f}%".format(label, max(mask, withoutMask) * 100)
+
+                    cv2.putText(frame, label, (startX, startY - 10),
+                                cv2.FONT_HERSHEY_SIMPLEX, 0.45, color, 2)
+                    cv2.rectangle(frame, (startX, startY), (endX, endY), color, 2)
+            except:
+                pass
+            cv2.imshow("Frame", frame)
+            
+            key = cv2.waitKey(1) & 0xFF
+            if key == ord("q"):
+                break
+        self.__camera.close_video()
+        cv2.destroyAllWindows()
+    
     # Listens for command from the remote
     def listen(self):
         while True:
@@ -64,6 +117,7 @@ class Controller:
     def listentolaptop(self):
         while True:
             response = self.__LaptopReceiver.listen()
+            print(response)
             if response is not None:
                 self.move(response[0], response[1])
 
