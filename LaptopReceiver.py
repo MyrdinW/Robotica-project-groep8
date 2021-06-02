@@ -11,13 +11,13 @@ class LaptopReceiver:
         self.s.bind((host,port))
         self.s.listen(2)
 
-    def listen(self):
+    def listen(self, frame):
         conn,addr= self.s.accept()
         print("Connected by",addr)
         data=conn.recv(1024)
         x = json.loads(data)
         print(x)
-        conn.send(data)
+        conn.send(frame)
         return [x["speed"], x["direction"]]
         
         

@@ -9,10 +9,10 @@ import imutils as imutils
 
 class Utils:
     def __init__(self):
-        self.__interpreter = tf.lite.Interpreter("models/model.tflite")
-        self.__interpreter.allocate_tensors()
-        self.__input_details = self.__interpreter.get_input_details()
-        self.__output_details = self.__interpreter.get_output_details()
+        # self.__interpreter = tf.lite.Interpreter("models/model.tflite")
+        # self.__interpreter.allocate_tensors()
+        # self.__input_details = self.__interpreter.get_input_details()
+        # self.__output_details = self.__interpreter.get_output_details()
 
         prototxtPath = "models/deploy.prototxt"
         weightsPath = "models/res10_300x300_ssd_iter_140000.caffemodel"
@@ -70,12 +70,19 @@ class Utils:
     
     # returns left/right of the middle with how many pixels to the middle and
     # up/down of the middle with how many pixels to the middle
-    def get_distance_blue(self, img):
+    # 0 = blue line
+    # 1 = black line
+    def get_distance_blue(self, img, par):
+        print(img)
         hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
-        lower_blue = np.array([80, 100, 100])
-        upper_blue = np.array([110, 255, 255])
-
+        if par == 0:
+            lower_blue = np.array([80, 60, 60])
+            upper_blue = np.array([120, 160, 160])
+        elif par == 1:
+            lower_blue = np.array([0,0,0])
+            upper_blue = np.array([255,50,50])
+            
         maskBlue = cv2.inRange(hsv, lower_blue, upper_blue)
 
         resBlue = cv2.bitwise_and(img, img, mask=maskBlue)

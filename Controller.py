@@ -11,6 +11,7 @@ from Receiver import Receiver
 from Servo import Servo
 from Weight import Weight
 from Utils import Utils
+from Sound import Sound
 import cv2
 from Weight_fake import Weight_fake
 from LaptopReceiver import LaptopReceiver
@@ -23,44 +24,90 @@ class Controller:
 
     def __init__(self):
         self.__task = False
+        self.__sound = Sound()
         self.__engine1 = Engine(3, 4, 2)
         self.__engine2 = Engine(27, 17, 22)
         self.__servo = Servo()
         self.__microphone = Microphone()
         self.__light = Light(15)
         self.__camera = Camera()
-        print("Utils starting")
+        # print("Utils starting")
         self.__utils = Utils()
-        print("Utils finished")
-        self.__Remote = Remote()
-        #self.__LaptopReceiver = LaptopReceiver()
-        try:
-            self.__weight = Weight()
-        except:
-            print("weight failed")
+        # print("Utils finished")
+        #self.__Remote = Remote()
+        self.__LaptopReceiver = LaptopReceiver()
+        print("test")
+        # try:
+        self.__weight = Weight_fake()
+        #except:
+        #    print("weight failed")
         #self.__receiver = Receiver()
         #threading.Thread(target=self.listen).start()
-        #threading.Thread(target=self.listentolaptop).start()
-        print("controller")
-        self.mask()
+        # threading.Thread(target=self.listentolaptop).start()
+        # print("controller")
+        t = threading.Thread(target=self.__sound.random_robot)
+        t.start()
+        # self.mask()
         #threading.Thread(target=self.dance).start()
         #self.__engine.set_value(0.1)
+        # self.followline()
+        #self.followstairline()
+        
+    def followstairline(self):
+        for i in range(1000):
+            _, frame = self.__camera.get_image()
+            # print(frame)
+            # try:
+            time0 = datetime.datetime.now()
+            output = self.__utils.get_distance_blue(frame, 1)
+            print(datetime.datetime.now() - time0)
+            if not output:
+                self.move(0, 0)
+                continue
+            if output[1] < 200:
+                self.move(0.3, 0.0)
+                print("moving forward")
+                continue
+            print(output)
+            if output[0] == "left":
+                print("going left")
+                self.move_track_control(0.8, 0)
+                continue
+            if output[0] == "right":
+                print("going right")
+                self.move_track_control(0, 0.8)
+                continue
+            self.move(0, 0)
+            # except:
+            #print("exception")
+        self.__camera.close_video()
+        cv2.destroyAllWindows()
+        # exit()
+        
         
     def followline(self):
         for i in range(1000):
             _, frame = self.__camera.get_image()
             # print(frame)
-            try:
-                output = self.__utils.get_distance_blue(frame)
-                print(output)
-                if output[0] == "left":
-                    print("going left")
-                    # self.move_track_control(-1, 1)
-                elif output[0] == "right":
-                    print("going right")
-                    # self.move_track_control(1, -1)
-            except:
-                pass
+            # try:
+            output = self.__utils.get_distance_blue(frame, 0)
+            if not output:
+                self.move(0, 0)
+                continue
+            if output[1] < 50:
+                continue
+            
+            print(output)
+            if output[0] == "left":
+                print("going left")
+                self.move(0, 0.001)
+            elif output[0] == "right":
+                print("going right")
+                self.move(0, -0.001)
+            time.sleep(0.1)
+            self.move(0, 0)
+            # except:
+            #print("exception")
         self.__camera.close_video()
         cv2.destroyAllWindows()
         # exit()
@@ -116,7 +163,8 @@ class Controller:
 
     def listentolaptop(self):
         while True:
-            response = self.__LaptopReceiver.listen()
+            _, frame = self.__camera.get_image()
+            response = self.__LaptopReceiver.listen(frame)
             print(response)
             if response is not None:
                 self.move(response[0], response[1])
