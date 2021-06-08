@@ -1,0 +1,60 @@
+.bd-placeholder-img {
+  font-size: 1.125rem;
+  text-anchor: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+}
+
+@media (min-width: 768px) {
+  .bd-placeholder-img-lg {
+    font-size: 3.5rem;
+  }
+}
+
+.opmaak {
+    background-color: #212529;
+    text-align: center;
+}
+
+h1 {
+    color: white;
+}
+
+  p {
+    color: white;
+}
+
+.camera {
+  display: inline-block;
+  margin: 0 auto;
+}
+
+.light {
+  width: 75%;
+  height: 100px;
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+}
+
+.microphone {
+    display: inline-block;
+    margin: 0 auto;
+}
+
+.engine {
+  width: 75%;
+  height: 100%;
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+}
+
+.servo {
+  width: 75%;
+  height: 100%;
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+}

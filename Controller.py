@@ -44,7 +44,7 @@ class Controller:
         # print("controller")
         #t = threading.Thread(target=self.__sound.random_robot)
         #t.start()
-        # self.mask()
+        #self.mask()
         #threading.Thread(target=self.dance).start()
         #self.__engine.set_value(0.1)
         #self.mask()
@@ -88,7 +88,7 @@ class Controller:
                 continue
             self.move(0, 0)
             # except:
-            #print("exception")
+            # print("exception")
         self.__camera.close_video()
         cv2.destroyAllWindows()
         # exit()
@@ -128,9 +128,12 @@ class Controller:
 
     #function for detecting is someone wears a mask 
     def mask(self):
+        # get frame from the video stream and resize it
         for i in range(200):
             frame = self.__camera.get_image()
             frame = imutils.resize(frame, width=800)
+
+            # detect faces in the frame and determine if they are wearing a mask
             try:
                 locs, preds = self.__utils.detect_and_predict_mask(frame)
 
@@ -138,6 +141,7 @@ class Controller:
                     (startX, startY, endX, endY) = box
                     (mask, withoutMask) = pred
 
+                    # determine the label and color which are used to draw the box and text
                     label = "Mask" if mask > withoutMask else "No Mask"
                     if mask < withoutMask:
                         print("No mask")
@@ -145,20 +149,27 @@ class Controller:
                         print("Mask")
                         # threading.Thread(target=playsound.playsound("shall.mp3")).start()
 
+                    # set the color based on the label
                     color = (0, 255, 0) if label == "Mask" else (0, 0, 255)
 
+                    # inculde the probability when printing the label
                     label = "{}: {:.2f}%".format(label, max(mask, withoutMask) * 100)
 
+                    # displays the label and box on the output of frame
                     cv2.putText(frame, label, (startX, startY - 10),
                                 cv2.FONT_HERSHEY_SIMPLEX, 0.45, color, 2)
                     cv2.rectangle(frame, (startX, startY), (endX, endY), color, 2)
             except:
                 pass
+
+            # show the output of frame
             cv2.imshow("Frame", frame)
-            
+
+            # break the loop if 'q' is pressed
             key = cv2.waitKey(1) & 0xFF
             if key == ord("q"):
                 break
+
         self.__camera.close_video()
         cv2.destroyAllWindows()
     
@@ -171,6 +182,8 @@ class Controller:
                 
                 
                 val = list(map(int, command))
+                print(val)
+                ##[int(command[0]),int(command[0]),int(command[0]),int(command[0]),int(command[0]),int(command[0])] 
                 
                 #mode 0 = sleep
                 print(val)
