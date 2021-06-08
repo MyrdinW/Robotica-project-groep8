@@ -2,10 +2,11 @@ class LineDance:
     """
     LineDance returns values needed for movement according to the peaks on low frequencies 
     through the # of leds, which references to a so called beat. 
-    Work in Progress: (Needs upgrade according to addition of gripper)
+    (Needs upgrade according to addition of gripper)
     """
 
     def __init__(self):
+        super().__init__()
         print("Dance initialized")
 
     def get_movement(self,i,x,y):

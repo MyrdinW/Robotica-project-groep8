@@ -7,7 +7,11 @@ import warnings
 from Controller import Controller
 
 app = Flask(__name__)
+
+# enable cross-origin resource sharing
 CORS(app)
+
+# make controller and retrieve different components for API-endpoint
 controller = Controller()
 camera_obj, servo_obj, light_obj, engine1_obj, engine2_obj, microphone_obj, weight_obj = controller.get_components()
 warnings.filterwarnings("ignore")
@@ -20,7 +24,7 @@ class ComponentsView(FlaskView):
 
     # returns encoded jpeg string of camera image
     def camera(self):
-        success, image = camera_obj.get_image()
+        image = camera_obj.get_image()
         ret, jpeg = cv2.imencode('.jpg', image)
         jpeg = base64.b64encode(jpeg)
         return jpeg
@@ -41,10 +45,6 @@ class ComponentsView(FlaskView):
     # returns value and torgue of engine
     def engine(self):
         return jsonify(engine1_value=engine_obj.get_value(), engine_offset=engine1_obj.get_offset())
-    
-    # returns value and torgue of engine
-    def engine(self):
-        return jsonify(engine2_value=engine_obj.get_value(), engine_offset=engine2_obj.get_offset())
 
     # returns weight in grams
     def weight(self):
@@ -53,4 +53,5 @@ class ComponentsView(FlaskView):
 
 ComponentsView.register(app, route_base="/api/")
 
+# run site
 # app.run()

@@ -75,9 +75,7 @@ class Utils:
     def get_distance_blue(self, img, par):
         print(img)
         hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-        u = np.uint8([[[0, 0, 255]]])
-        print(np.array(cv2.cvtColor(u, cv2.COLOR_BGR2HSV)))
-        
+
         if par == 0:
             lower_blue = np.array([99,160,99])
             upper_blue = np.array([109,255,255])
@@ -92,6 +90,7 @@ class Utils:
         resBlue = cv2.bitwise_and(img, img, mask=maskBlue)
 
         gray = cv2.cvtColor(resBlue, cv2.COLOR_BGR2GRAY)
+
         thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
 
         try:
@@ -100,30 +99,35 @@ class Utils:
 
             max_area = 0
             max_contour = contours[0]
-
+            # Goes through all the contours and tries to find the biggest one.
             for cnt in contours:
                 area = cv2.contourArea(cnt)
                 if max_area < area:
                     max_area = area
                     max_contour = cnt
 
+            # Get and show the rectangle around the biggest contour.
             x, y, w, h = cv2.boundingRect(max_contour)
             cv2.rectangle(img_contours, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
+            # Show the biggest contour.
             cv2.drawContours(img_contours, [max_contour], -1, (0, 255, 255), 3)
-            M = cv2.moments(max_contour)
 
+            # Find the center of mass and show as a circle.
+            M = cv2.moments(max_contour)
             cx = int(M['m10'] / M['m00'])
             cy = int(M['m01'] / M['m00'])
-
             cv2.circle(img_contours, (cx, cy), 3, (0, 255, 255), -1)
 
             cv2.imshow("img", img_contours)
+
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 return ""
+
             width = img.shape[1]
             height = img.shape[0]
 
+            # Check where the biggest contour is located with a margin (dist_pix)
             if cx < width / 2:
                 if cy < height / 2:
                     return "left", width / 2 - cx, h < dist_pix
