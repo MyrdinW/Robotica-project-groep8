@@ -53,4 +53,4 @@ class ComponentsView(FlaskView):
 
 ComponentsView.register(app, route_base="/api/")
 
-app.run()
+# app.run()

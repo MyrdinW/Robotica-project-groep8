@@ -15,7 +15,13 @@ class Weight:
         measures = self.__hx711.get_raw_data()
         measures = np.asarray(measures)
         results = []
+        
         for measure in measures:
-            results.append((measure + 98889) / -548)
+            results.append((measure + 1228161) / 556)
+        #print(results)
         print(str(np.average(results)) + "g")
         return str(np.average(results)) + "g"
+#96823 -548
+#weight = Weight()
+#while True:
+#    weight.get_weight()
