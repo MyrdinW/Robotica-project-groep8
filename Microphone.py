@@ -21,7 +21,7 @@ class Microphone:
         print("Microphone initialized")
 
     # returns encoded image of sound waves
-    def get_image(self):
+    def getImage(self):
         data = np.frombuffer(self.__stream.read(self.__chunk), dtype=np.int16)
         fig, axis = plt.subplots()
         axis.plot(data, 'r')
@@ -30,23 +30,23 @@ class Microphone:
         image = io.BytesIO()
         fig.savefig(image, format="jpg")
         image.seek(0)
-        encoded_image = base64.b64encode(image.read())
+        encodedImage = base64.b64encode(image.read())
         return encoded_image
 
     # Gets amounts of lights to be on for each frequency range
-    def get_max_lights(self):
+    def getMaxLights(self):
         data = np.frombuffer(self.__stream.read(self.__chunk), dtype=np.int16)
-        peak_low = max(data[:200])
-        peak_mid = max(data[200:2000])
-        peak_high = max(data[2000:])
+        peakLow = max(data[:200])
+        peakMid = max(data[200:2000])
+        peakHigh = max(data[2000:])
 
-        leds_low = self.get_amount(peak_low)
-        leds_mid = self.get_amount(peak_mid)
-        leds_high = self.get_amount(peak_high)
-        return leds_low, leds_mid, leds_high
+        ledsLow = self.getAmount(peakLow)
+        ledsMid = self.getAmount(peakMid)
+        ledsHigh = self.getAmount(peakHigh)
+        return ledsLow, ledsMid, ledsHigh
 
     # return amount of lights according to peak of  each frequency range
-    def get_amount(self, peak):
+    def getAmount(self, peak):
         lights = abs(1 * int(Robotconfig.microphone['sensitivity'] * peak / 2 ** 15))
         if lights > 5:
             return 5

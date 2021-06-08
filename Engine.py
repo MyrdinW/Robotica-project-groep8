@@ -22,7 +22,7 @@ class Engine:
         print("motor initialized")
 
     # Changes motor value according to values from
-    def set_value(self, value):
+    def setValue(self, value):
         self.value = value + self.offset
         if value == 0:
             gpio.output(self.__fpin, 0)
@@ -45,6 +45,6 @@ class Engine:
             self.p.ChangeDutyCycle(100 * value * -1)
         
     # returns value of engine
-    def get_value(self):
+    def getValue(self):
         return self.value
 

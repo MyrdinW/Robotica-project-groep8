@@ -17,5 +17,5 @@ class Magnet:
             GPIO.output(self.__pin, value)
             self.__value = value
         
-    def getvalue(self):
+    def getValue(self):
         return self.__value

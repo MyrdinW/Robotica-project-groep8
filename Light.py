@@ -9,10 +9,10 @@ class Light:
 
     def __init__(self, leds):
         super().__init__()
-        self.__pixel_pin = board.D21
-        self.__num_pixels = 16
+        self.__pixelPin = board.D21
+        self.__numPixels = 16
         self.__order = neopixel.RGBW
-        self.__pixels = neopixel.NeoPixel(self.__pixel_pin, self.__num_pixels, brightness=0.2, auto_write=False,
+        self.__pixels = neopixel.NeoPixel(self.__pixelPin, self.__numPixels, brightness=0.2, auto_write=False,
                                           pixel_order=self.__order)
 
         low = [0, 1, 2, 5, 6, 7, 10, 11, 12]
@@ -36,7 +36,7 @@ class Light:
 
         print("Light initalized")
 
-    def set_values(self, low, mid, high):
+    def setValues(self, low, mid, high):
         """
         Args:
             low: amount of lights to be enable on low frequency strip
@@ -44,7 +44,7 @@ class Light:
             high: amount of lights to be enable on mid frequency strip
         """
         print(f"{low} {mid} {high}")
-        for i in range(self.__num_pixels):
+        for i in range(self.__numPixels):
             self.__pixels[i] = (0, 0, 0, 0)
 
         for i in range(0, 5):
@@ -57,10 +57,10 @@ class Light:
 
         self.__pixels.show()
 
-    def reset_lights(self):
-        for i in range(self.__num_pixels):
+    def resetLights(self):
+        for i in range(self.__numPixels):
             self.__pixels[i] = (0, 0, 0, 0)
         self.__pixels.show()
 
-    def get_lights(self):
+    def getLights(self):
         return str(self.__pixels)

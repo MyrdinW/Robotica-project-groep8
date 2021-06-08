@@ -10,7 +10,7 @@ class Servo:
         self.__hlimit = [563, 1]
         # 87 rotation 0 start
     
-    def move_to_weight(self):
+    def moveToWeight(self):
         self.__servos.moveInWheelMode(self.__id, 400)
         self.skip = False
         while True:
@@ -29,11 +29,11 @@ class Servo:
         self.__servos.move(self.__id, position)
         self.__servos.action()
 
-    def move_speed(self, position, speed):
+    def moveSpeed(self, position, speed):
         self.__servos.moveSpeed(self.__id, position, speed)
         self.__servos.action()
     
-    def move_unlimited(self, speed):
+    def moveUnlimited(self, speed):
         if speed < 0:
             value = int(speed * -1023)
             print(value)

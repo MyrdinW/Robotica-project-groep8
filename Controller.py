@@ -29,25 +29,19 @@ class Controller:
         #self.__sound = Sound()
         self.__engine1 = Engine(3, 4, 2)
         self.__engine2 = Engine(27, 17, 22)
-        self.__servo_camera = Servo(1, 0)
-        self.__servo_gripper = Servo(0, 1)
+        self.__servoCamera = Servo(1, 0)
+        self.__servoGripper = Servo(0, 1)
         self.__microphone = Microphone()
-        self.__light = Light(15)
+        self.__light = Light(13)
         self.__camera = Camera()
-        self.__magnet = Magnet(25)    
+        self.__magnet = Magnet(16)    
         self.__utils = Utils()
         self.__remote = Remote()
-        self.__RemoteSocket = RemoteSocket()
+        self.__remoteSocket = RemoteSocket()
         self.__weight = Weight()
 
-        threading.Thread(target=self.RemoteListener).start()
-        # print("controller")
-        #t = threading.Thread(target=self.__sound.random_robot)
-        #t.start()
-        #self.mask()
-        #threading.Thread(target=self.dance).start()
-        #self.__engine.set_value(0.1)
-        #self.mask()
+        threading.Thread(target=self.remoteListener).start()
+       
 
 
         #
@@ -55,20 +49,80 @@ class Controller:
         while True:
             while self.__mode == 3:
                 cameraOn = True
-                self.followline()
+                self.followCollor(False, 0)
             if cameraOn == True:
                 cameraOn = False
-                self.__camera.close_video()
+                self.__camera.closeVideo()
                 cv2.destroyAllWindows()
 
+
+    #function for listening to the controller
+    def remoteListener(self):
+        print("start listening to controller")
+        lastTimeReceived = datetime.datetime.now()
+        while True:
+            command = self.__RemoteSocket.listen()
+            
+            if command is None:
+                if datetime.datetime.now() - lastTimeReceived = datetime.timedelta(microseconds = 500000):
+                    command = [0]
+                else:
+                    continue
+            else:
+                val = list(map(int, command))
+
+            lastTimeReceived = datetime.datetime.now()
+                
+                        
+            #mode 0 = sleep
+            print(val)
+            if val[0] == 0:
+                if self.__mode != 0:
+                    self.__mode = 0
+                self.move(0, 0)
+                self.moveGripper(0)
+                continue
+                
+            #set joypositions
+            self.__remote.setJoyPositions([val[1], val[2], val[3], val[4]])
+
+            #mode 1 = drive
+            if val[0] == 1:
+                if self.__mode != 1:
+                    self.__mode = 1
+               
+                input1 = self.__remote.getPosition('y1')
+                input2 = self.__remote.getPosition('y2')
+                
+                #self.move_track_control(y1, y2)
+                self.moveTrackControl(input1, input2)
+            
+            #mode 2 = move gripper
+            if val[0] == 2:
+                if self.__mode != 2:
+                    self.__mode = 2
+                y1 = self.__remote.getPosition('y1')
+                print(y1)
+                self.moveGripper(y1, val[5])
+                continue
+            
+            #mode 3 = following blue car 
+            if val[0] == 3:
+                if self.__mode != 3:
+                    self.__mode = 3
+                continue
+
+
+
+                    
     #Function for following the line on the staircase 
-    def followstairline(self):
+    def followLine(self ):
         for i in range(1000):
-            frame = self.__camera.get_image()
+            frame = self.__camera.getImage()
             # print(frame)
             # try:
             time0 = datetime.datetime.now()
-            output = self.__utils.get_distance_blue(frame, 1)
+            output = self.__utils.get_distanceBlue(frame, 1)
             print(datetime.datetime.now() - time0)
             if not output:
                 self.move(0, 0)
@@ -80,62 +134,65 @@ class Controller:
             print(output)
             if output[0] == "left":
                 print("going left")
-                self.move_track_control(0.8, 0)
+                self.moveTrackControl(0.8, 0)
                 continue
             if output[0] == "right":
                 print("going right")
-                self.move_track_control(0, 0.8)
+                self.moveTrackControl(0, 0.8)
                 continue
             self.move(0, 0)
             # except:
             # print("exception")
-        self.__camera.close_video()
+        self.__camera.closeVideo()
         cv2.destroyAllWindows()
         # exit()
         
     
     #function for folling the car with the blue block
-    def followline(self):
-        print("follow line")
-        
-        #time0 = datetime.datetime.now()
-        frame = self.__camera.get_image()
-        output = self.__utils.get_distance_blue(frame, 0)
-        #print(datetime.datetime.now() - time0)
-        print(output)
-        
-        #if nothing is detected do nothing is stopping robot
-        if not output:
-            self.move(0, 0)
-            return 
+    def followCollor(self, driving = False, color):
+        try:        
+            #time0 = datetime.datetime.now()
+            frame = self.__camera.getImage()
+            output = self.__utils.getDistanceBlue(frame, color)
+            #print(datetime.datetime.now() - time0)
+            print(output)
+            
+            #if nothing is detected do nothing is stopping robot
+            if not output:
+                self.move(0, 0)
+                return 
 
-        #if the blue block is in the middle do nothing
-        if output[1] < 50:
-            self.move(0, 0)
-            return
+            #if the blue block is in the middle do nothing
+            if output[1] < 50:
+                if driving == True:
+                    self.move(0.3 , 0)
+                else:
+                    self.move(0.0 , 0)
 
-        #if the blue block is on the left turn left 
-        if output[0] == "left":
-            print("going left")
-            self.move(0, -0.1)
-            return
+            #if the blue block is on the left turn left 
+            if output[0] == "left":
+                print("going left")
+                self.move(0, -0.1)
+                return
 
-        #if the blue block is on the left turn right 
-        elif output[0] == "right":
-            print("going right")
-            self.move(0, 0.1)   
-            return
+            #if the blue block is on the left turn right 
+            elif output[0] == "right":
+                print("going right")
+                self.move(0, 0.1)   
+                return
+        except:
+            print("following line failed")
 
     #function for detecting is someone wears a mask 
     def mask(self):
         # get frame from the video stream and resize it
         for i in range(200):
-            frame = self.__camera.get_image()
+            frame = self.__camera.getImage()
             frame = imutils.resize(frame, width=800)
 
             # detect faces in the frame and determine if they are wearing a mask
             try:
-                locs, preds = self.__utils.detect_and_predict_mask(frame)
+                locs, preds = self.__utils.detectAndPredictMask(frame)
 
                 for (box, pred) in zip(locs, preds):
                     (startX, startY, endX, endY) = box
@@ -170,87 +227,51 @@ class Controller:
             if key == ord("q"):
                 break
 
-        self.__camera.close_video()
+        self.__camera.closeVideo()
         cv2.destroyAllWindows()
     
-    #function for listening to the controller
-    def RemoteListener(self):
-        print("start listening to controller")
-        while True:
-            command = self.__RemoteSocket.listen()
-            if command is not None:
-                
-                
-                val = list(map(int, command))
-                print(val)
-                ##[int(command[0]),int(command[0]),int(command[0]),int(command[0]),int(command[0]),int(command[0])] 
-                
-                #mode 0 = sleep
-                print(val)
-                if val[0] == 0:
-                    if self.__mode != 0:
-                        self.__mode = 0
-                    continue
-                    
-                #set joypositions
-                self.__remote.set_joy_positions([val[1], val[2], val[3], val[4]])
-
-                #mode 1 = drive
-                if val[0] == 1:
-                    if self.__mode != 1:
-                        self.__mode = 1
-                    y1 = self.__remote.get_position('y1')
-                    x1 = self.__remote.get_position('x1')
-                    
-                    #y2 = self.__remote.get_move_positions('y2')
-                    if y1 is None or x1 is None:
-                        continue
-                    #self.move_track_control(y1, y2)
-                    self.move(y1, x1)
-                
-                #mode 2 = move gripper
-                if val[0] == 2:
-                    if self.__mode != 2:
-                        self.__mode = 2
-                    y1 = self.__remote.get_position('y1')
-                    print(y1)
-                    self.movegripper(y1, val[5])
-
-                #mode 3 = following blue car 
-                if val[0] == 3:
-                    if self.__mode != 3:
-                        self.__mode = 3
-                    
-
 
 
     # Moves gripper with x and y value of joystick
-    def movegripper(self, joypos, magnet):
-        self.__servo_gripper.move_unlimited(joypos)
-        self.__magnet.switch(magnet)
-        print("Moving gripper")
+    def moveGripper(self, joypos, magnet = None):
+        try:
+            self.__servoGripper.moveUnlimited(joypos)
+            if magnet is not None:
+                self.__magnet.switch(magnet)
+        except: 
+            print("moving gripper failed")
+    
 
     # Moves robot with x and y value of joystick
     def move(self, speed, direction):
-        self.__engine1.set_value(speed + direction)
-        self.__engine2.set_value(speed - direction)
+        try:
+            self.__engine1.setValue(speed + direction)
+            self.__engine2.setValue(speed - direction)
+        except:
+            print("moving robot failed(move)")
+            self.__engine1.setValue(0)
+            self.__engine2.setValue(0)
 
-    def move_track_control(self, lefttrack, righttrack):
-        self.__engine1.set_value(lefttrack)
-        self.__engine2.set_value(righttrack)
+    def moveTrackControl(self, lefttrack, righttrack):
+        try:
+            self.__engine1.setValue(lefttrack)
+            self.__engine2.setValue(righttrack)
+        except:
+            print("moving robot failed(trackcontrol)")
         
 
     # Robot dance command
     def dance(self):
         print("dance started")
-        timedelta = datetime.timedelta(minutes=100)
-        timeend = datetime.datetime.now() + timedelta
-        while datetime.datetime.now() < timeend:
-            low, mid, high = self.__microphone.get_max_lights()
-            self.__light.set_values(low, mid, high)
-        self.__light.reset_lights()
+        timeDelta = datetime.timedelta(minutes=100)
+        timeEnd = datetime.datetime.now() + timeDelta
+        while datetime.datetime.now() < timeEnd:
+            low, mid, high = self.__microphone.getMaxLights()
+            self.__light.setValues(low, mid, high)
+        self.__light.resetLights()
         print("mic stopped")
 
+
     # returns all components
-    def get_components(self):
-        return self.__camera, self.__servo_gripper, self.__light, self.__engine1, self.__engine1, self.__microphone, self.__weight
+    def getComponents(self):
+        return self.__camera, self.__servoGripper, self.__light, self.__engine1, self.__engine2, self.__microphone, self.__weight

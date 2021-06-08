@@ -9,7 +9,7 @@ class LineDance:
         super().__init__()
         print("Dance initialized")
 
-    def get_movement(self,i,x,y):
+    def getMovement(self,i,x,y):
         movement = (0,0)
 
         if i >= 4:

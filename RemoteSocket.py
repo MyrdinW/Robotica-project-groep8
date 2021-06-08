@@ -21,7 +21,7 @@ class RemoteSocket:
         
         
         payload = str(payload)
-        
+        print(len(payload))
         #splits the message and checks if the message starts with 00, then puts the data in an array
         comp = payload.split("b'")[1].replace("')", "").replace("'", "").split(",")
         if comp[0] == '00':
