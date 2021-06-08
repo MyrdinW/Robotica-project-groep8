@@ -1,4 +1,4 @@
-import base64
+import base64 
 import io
 import matplotlib.pyplot as plt
 import numpy as np
@@ -9,6 +9,11 @@ import Robotconfig
 class Microphone:
     """
     Microphone handles all actions with the microphone
+    Through the pyaudio stream, which is connected to the Microphone by USB, pyaudio encodes the soundwave in to a numpy array
+    get_image: Matplotlib translates the stream into a visual plot for the telemetry website
+    get_max_lights: through the max function, every highest peak in a Hz frequency range is returned and through the get_amount the
+    number of led's that should be switched on is returned
+    get_amount: according to the peak and the sensitivity, the number of led's to be switched on is calculated. 
     """
 
     def __init__(self):
