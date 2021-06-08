@@ -14,14 +14,15 @@ from Magnet import Magnet
 from Utils import Utils
 #from Sound import Sound
 import cv2
-from Weight_fake import Weight_fake
-from LaptopReceiver import LaptopReceiver
+from RemoteSocket import RemoteSocket
 
 class Controller:
     """
         Controller handles all actions of the robot as a whole.
         It acts as a facade that handles all components
     """
+
+    #initializing all components 
 
     def __init__(self):
         self.__mode = 0
@@ -33,21 +34,13 @@ class Controller:
         self.__microphone = Microphone()
         self.__light = Light(15)
         self.__camera = Camera()
-        self.__magnet = Magnet(25)
-        
-        # print("Utils starting")
+        self.__magnet = Magnet(25)    
         self.__utils = Utils()
-        # print("Utils finished")
         self.__remote = Remote()
-        self.__laptopreceiver = LaptopReceiver()
-        print("test")
-        # try:
+        self.__RemoteSocket = RemoteSocket()
         self.__weight = Weight()
-        #except:
-        #    print("weight failed")
-        #self.__receiver = Receiver()
-        #threading.Thread(target=self.listen).start()
-        threading.Thread(target=self.listentolaptop).start()
+
+        threading.Thread(target=self.RemoteListener).start()
         # print("controller")
         #t = threading.Thread(target=self.__sound.random_robot)
         #t.start()
@@ -55,8 +48,20 @@ class Controller:
         #threading.Thread(target=self.dance).start()
         #self.__engine.set_value(0.1)
         #self.mask()
-        self.followline()
-        
+
+
+        #
+        cameraOn = False
+        while True:
+            while self.__mode == 3:
+                cameraOn = True
+                self.followline()
+            if cameraOn == True:
+                cameraOn = False
+                self.__camera.close_video()
+                cv2.destroyAllWindows()
+
+    #Function for following the line on the staircase 
     def followstairline(self):
         for i in range(1000):
             frame = self.__camera.get_image()
@@ -88,44 +93,40 @@ class Controller:
         cv2.destroyAllWindows()
         # exit()
         
-        
+    
+    #function for folling the car with the blue block
     def followline(self):
         print("follow line")
         
-        for i in range(1000):
-            
-            #time0 = datetime.datetime.now()
-            frame = self.__camera.get_image()
-            output = self.__utils.get_distance_blue(frame, 0)
-            #print(datetime.datetime.now() - time0)
-            print(output)
-            
-            if not output:
-                self.move(0, 0)
-                continue
-            
-            if output[1] < 50:
-                self.move(0, 0)
-                continue
+        #time0 = datetime.datetime.now()
+        frame = self.__camera.get_image()
+        output = self.__utils.get_distance_blue(frame, 0)
+        #print(datetime.datetime.now() - time0)
+        print(output)
+        
+        #if nothing is detected do nothing is stopping robot
+        if not output:
+            self.move(0, 0)
+            return 
 
-            if output[0] == "left":
-                print("going left")
-                self.move(0, -0.1)
-                continue
-                
-            elif output[0] == "right":
-                print("going right")
-                self.move(0, 0.1)
-                continue
-                    
+        #if the blue block is in the middle do nothing
+        if output[1] < 50:
+            self.move(0, 0)
+            return
 
-            
-            # except:
-            #print("exception")
-        self.__camera.close_video()
-        cv2.destroyAllWindows()
-        # exit()
-    
+        #if the blue block is on the left turn left 
+        if output[0] == "left":
+            print("going left")
+            self.move(0, -0.1)
+            return
+
+        #if the blue block is on the left turn right 
+        elif output[0] == "right":
+            print("going right")
+            self.move(0, 0.1)   
+            return
+
+    #function for detecting is someone wears a mask 
     def mask(self):
         for i in range(200):
             frame = self.__camera.get_image()
@@ -161,51 +162,30 @@ class Controller:
         self.__camera.close_video()
         cv2.destroyAllWindows()
     
-    # Listens for command from the remote
-    def listen(self):
-        print("start listening")
+    #function for listening to the controller
+    def RemoteListener(self):
+        print("start listening to controller")
         while True:
-            
-            command = self.__receiver.listen()
-            self.__weight.get_weight()
+            command = self.__RemoteSocket.listen()
             if command is not None:
                 
                 
                 val = list(map(int, command))
-                print(val)
-                ##[int(command[0]),int(command[0]),int(command[0]),int(command[0]),int(command[0]),int(command[0])] 
                 
+                #mode 0 = sleep
+                print(val)
                 if val[0] == 0:
+                    if self.__mode != 0:
+                        self.__mode = 0
                     continue
-            
-                self.__remote.set_joy_positions([val[1], val[2], val[3], val[4]])
-                if val[0] == 1:
-                    remotepositions = self.__remote.get_move_positions()
-                    print(remotepositions)
-                    if remotepositions[0] is None:
-                        continue
-                    #self.move_track_control(remotepositions[0], remotepositions[0])
-                    #self.move(remotepositions[0], remotepositions[1])
                     
-                if val[0] == 2:
-                    print(val[1])
-                    #self.movegripper(val[1], val[2])
-
-    def listentolaptop(self):
-        print("start listening laptop")
-        while True:
-            command = self.__laptopreceiver.listen()
-            if command is not None:
-                
-                
-                val = list(map(int, command))
-                
-                print(val)
-                if val[0] == 0:
-                    continue
-            
+                #set joypositions
                 self.__remote.set_joy_positions([val[1], val[2], val[3], val[4]])
+
+                #mode 1 = drive
                 if val[0] == 1:
+                    if self.__mode != 1:
+                        self.__mode = 1
                     y1 = self.__remote.get_position('y1')
                     x1 = self.__remote.get_position('x1')
                     
@@ -214,14 +194,20 @@ class Controller:
                         continue
                     #self.move_track_control(y1, y2)
                     self.move(y1, x1)
-                    
+                
+                #mode 2 = move gripper
                 if val[0] == 2:
+                    if self.__mode != 2:
+                        self.__mode = 2
                     y1 = self.__remote.get_position('y1')
                     print(y1)
                     self.movegripper(y1, val[5])
 
+                #mode 3 = following blue car 
                 if val[0] == 3:
-                    print("test")
+                    if self.__mode != 3:
+                        self.__mode = 3
+                    
 
 
 
