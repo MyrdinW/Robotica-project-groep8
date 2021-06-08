@@ -1,7 +1,7 @@
 class Remote:
     def __init__(self):
         self.__positions = [0, 2658, 0, 0] # 0 = x1, 1 = y1, 2 = x2, 3 = y2  // 0 - 4016 
-        self.__deadzone = [0, 1750, 2250, 4016],[0, 1700, 2200, 4016],[0, 2040, 2060, 4016],[0, 2040, 2060, 4016]
+        self.__deadzone = [0, 439, 449, 1000][0, 437, 447, 1000],[0, 450, 460, 1000],[0, 429, 439, 1000]
 
     def set_joy_positions(self, positions):
         self.__positions = [positions[0], positions[1], positions[2], positions[3]]
