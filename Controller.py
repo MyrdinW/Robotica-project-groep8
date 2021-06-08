@@ -32,9 +32,9 @@ class Controller:
         self.__servoCamera = Servo(1, 0)
         self.__servoGripper = Servo(0, 1)
         self.__microphone = Microphone()
-        self.__light = Light(15)
+        self.__light = Light(13)
         self.__camera = Camera()
-        self.__magnet = Magnet(25)    
+        self.__magnet = Magnet(16)    
         self.__utils = Utils()
         self.__remote = Remote()
         self.__remoteSocket = RemoteSocket()
@@ -49,7 +49,7 @@ class Controller:
         while True:
             while self.__mode == 3:
                 cameraOn = True
-                self.followLine(False, 0)
+                self.followCollor(False, 0)
             if cameraOn == True:
                 cameraOn = False
                 self.__camera.closeVideo()
@@ -90,6 +90,7 @@ class Controller:
             if val[0] == 1:
                 if self.__mode != 1:
                     self.__mode = 1
+               
                 input1 = self.__remote.getPosition('y1')
                 input2 = self.__remote.getPosition('y2')
                 
@@ -148,7 +149,7 @@ class Controller:
         
     
     #function for folling the car with the blue block
-    def followColor(self, driving = False, color):
+    def followCollor(self, driving = False, color):
         try:        
             #time0 = datetime.datetime.now()
             frame = self.__camera.getImage()
@@ -248,6 +249,8 @@ class Controller:
             self.__engine2.setValue(speed - direction)
         except:
             print("moving robot failed(move)")
+            self.__engine1.setValue(0)
+            self.__engine2.setValue(0)
 
     def moveTrackControl(self, lefttrack, righttrack):
         try:
