@@ -10,8 +10,9 @@ from Microphone import Microphone
 from Receiver import Receiver
 from Servo import Servo
 from Weight import Weight
+from Magnet import Magnet
 from Utils import Utils
-from Sound import Sound
+#from Sound import Sound
 import cv2
 from Weight_fake import Weight_fake
 from LaptopReceiver import LaptopReceiver
@@ -23,39 +24,42 @@ class Controller:
     """
 
     def __init__(self):
-        self.__task = False
-        self.__sound = Sound()
+        self.__mode = 0
+        #self.__sound = Sound()
         self.__engine1 = Engine(3, 4, 2)
         self.__engine2 = Engine(27, 17, 22)
-        self.__servo = Servo()
+        self.__servo_camera = Servo(1, 0)
+        self.__servo_gripper = Servo(0, 1)
         self.__microphone = Microphone()
         self.__light = Light(15)
         self.__camera = Camera()
+        self.__magnet = Magnet(25)
+        
         # print("Utils starting")
         self.__utils = Utils()
         # print("Utils finished")
-        #self.__Remote = Remote()
-        self.__LaptopReceiver = LaptopReceiver()
+        self.__remote = Remote()
+        self.__laptopreceiver = LaptopReceiver()
         print("test")
         # try:
-        self.__weight = Weight_fake()
+        self.__weight = Weight()
         #except:
         #    print("weight failed")
         #self.__receiver = Receiver()
         #threading.Thread(target=self.listen).start()
-        # threading.Thread(target=self.listentolaptop).start()
+        threading.Thread(target=self.listentolaptop).start()
         # print("controller")
-        t = threading.Thread(target=self.__sound.random_robot)
-        t.start()
+        #t = threading.Thread(target=self.__sound.random_robot)
+        #t.start()
         # self.mask()
         #threading.Thread(target=self.dance).start()
         #self.__engine.set_value(0.1)
-        # self.followline()
-        #self.followstairline()
+        #self.mask()
+        self.followline()
         
     def followstairline(self):
         for i in range(1000):
-            _, frame = self.__camera.get_image()
+            frame = self.__camera.get_image()
             # print(frame)
             # try:
             time0 = datetime.datetime.now()
@@ -86,26 +90,36 @@ class Controller:
         
         
     def followline(self):
+        print("follow line")
+        
         for i in range(1000):
-            _, frame = self.__camera.get_image()
-            # print(frame)
-            # try:
+            
+            #time0 = datetime.datetime.now()
+            frame = self.__camera.get_image()
             output = self.__utils.get_distance_blue(frame, 0)
+            #print(datetime.datetime.now() - time0)
+            print(output)
+            
             if not output:
                 self.move(0, 0)
                 continue
-            if output[1] < 50:
-                continue
             
-            print(output)
+            if output[1] < 50:
+                self.move(0, 0)
+                continue
+
             if output[0] == "left":
                 print("going left")
-                self.move(0, 0.001)
+                self.move(0, -0.1)
+                continue
+                
             elif output[0] == "right":
                 print("going right")
-                self.move(0, -0.001)
-            time.sleep(0.1)
-            self.move(0, 0)
+                self.move(0, 0.1)
+                continue
+                    
+
+            
             # except:
             #print("exception")
         self.__camera.close_video()
@@ -113,8 +127,8 @@ class Controller:
         # exit()
     
     def mask(self):
-        for i in range(50):
-            _, frame = self.__camera.get_image()
+        for i in range(200):
+            frame = self.__camera.get_image()
             frame = imutils.resize(frame, width=800)
             try:
                 locs, preds = self.__utils.detect_and_predict_mask(frame)
@@ -149,32 +163,72 @@ class Controller:
     
     # Listens for command from the remote
     def listen(self):
+        print("start listening")
         while True:
+            
             command = self.__receiver.listen()
+            self.__weight.get_weight()
             if command is not None:
-                val = command.split()
-                self.__Remote.set_joy_positions([val[1], val[2], val[3], val[4]])
-                if val[0] == "move":
-                    self.move_track_control(Remote.get_move_positions_track_control())
-                    #self.move(Remote.get_move_positions)
+                
+                
+                val = list(map(int, command))
+                print(val)
+                ##[int(command[0]),int(command[0]),int(command[0]),int(command[0]),int(command[0]),int(command[0])] 
+                
+                if val[0] == 0:
+                    continue
+            
+                self.__remote.set_joy_positions([val[1], val[2], val[3], val[4]])
+                if val[0] == 1:
+                    remotepositions = self.__remote.get_move_positions()
+                    print(remotepositions)
+                    if remotepositions[0] is None:
+                        continue
+                    #self.move_track_control(remotepositions[0], remotepositions[0])
+                    #self.move(remotepositions[0], remotepositions[1])
                     
-                elif val[0] == "movegripper":
-                    self.movegripper(val[1], val[2])
+                if val[0] == 2:
+                    print(val[1])
+                    #self.movegripper(val[1], val[2])
 
     def listentolaptop(self):
+        print("start listening laptop")
         while True:
-            _, frame = self.__camera.get_image()
-            response = self.__LaptopReceiver.listen(frame)
-            print(response)
-            if response is not None:
-                self.move(response[0], response[1])
+            command = self.__laptopreceiver.listen()
+            if command is not None:
+                
+                
+                val = list(map(int, command))
+                
+                print(val)
+                if val[0] == 0:
+                    continue
+            
+                self.__remote.set_joy_positions([val[1], val[2], val[3], val[4]])
+                if val[0] == 1:
+                    y1 = self.__remote.get_position('y1')
+                    x1 = self.__remote.get_position('x1')
+                    
+                    #y2 = self.__remote.get_move_positions('y2')
+                    if y1 is None or x1 is None:
+                        continue
+                    #self.move_track_control(y1, y2)
+                    self.move(y1, x1)
+                    
+                if val[0] == 2:
+                    y1 = self.__remote.get_position('y1')
+                    print(y1)
+                    self.movegripper(y1, val[5])
 
-
+                if val[0] == 3:
+                    print("test")
 
 
 
     # Moves gripper with x and y value of joystick
-    def movegripper(self, x, y):
+    def movegripper(self, joypos, magnet):
+        self.__servo_gripper.move_unlimited(joypos)
+        self.__magnet.switch(magnet)
         print("Moving gripper")
 
     # Moves robot with x and y value of joystick
@@ -200,4 +254,4 @@ class Controller:
 
     # returns all components
     def get_components(self):
-        return self.__camera, self.__servo, self.__light, self.__engine1, self.__engine1, self.__microphone, self.__weight
+        return self.__camera, self.__servo_gripper, self.__light, self.__engine1, self.__engine1, self.__microphone, self.__weight

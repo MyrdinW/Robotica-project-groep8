@@ -2,6 +2,7 @@ import argparse
 import datetime
 import sys
 import pigpio
+import RPi.GPIO as GPIO
 from nrf24 import *
 
 
@@ -10,6 +11,13 @@ class Receiver:
     Handles remote signals
     """
     def __init__(self):
+        
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setup(21, GPIO.OUT)    
+        GPIO.output(21, 1)
+        
+        
+        
         parser = argparse.ArgumentParser(prog="Receiver.py", description="Simple NRF24 Receiver Example.")
         parser.add_argument('-n', '--hostname', type=str, default='localhost',
                             help="Hostname for the Raspberry running the pigpio daemon.")
@@ -53,35 +61,10 @@ class Receiver:
             # If the length of the message is 9 bytes and the first byte is 0x01, then we try to interpret the bytes
             # sent as an example message holding a temperature and humidity sent from the "simple-sender.py" program.
             comp = payload.split("b'")[1].replace("')", "").split(",")
-            print(comp)
             if comp[0] == '00':
-                print(comp)
-                mode = int(comp[1])
                 if len(comp) > 1:
-                    x1 = int(comp[2])
-                    y1 = int(comp[3])
-                    x2 = int(comp[4])
-                    y2 = int(comp[5])
-                    v = float(comp[6])
-
-                print(mode)
-                if mode == 0:
-                    return "sleep"
-                elif mode == 1:
-                    return f"move {x1} {y1}"
-                elif mode == 2:
-                    return f"movegripper {x1} {y1}"
-                elif mode == 3:
-                    return "dance"
-                elif mode == 4:
-                    return "danceaut"
-                elif mode == 5:
-                    return "followline"
-                elif mode == 6:
-                    return "followcar"
-                elif mode == 7:
-                    return f"pickupmask"
-                return None
-
+                    comp = comp[1:]
+                   
+                    return comp
         else:
             return None

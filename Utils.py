@@ -9,10 +9,10 @@ import imutils as imutils
 
 class Utils:
     def __init__(self):
-        # self.__interpreter = tf.lite.Interpreter("models/model.tflite")
-        # self.__interpreter.allocate_tensors()
-        # self.__input_details = self.__interpreter.get_input_details()
-        # self.__output_details = self.__interpreter.get_output_details()
+        self.__interpreter = tf.lite.Interpreter("models/model.tflite")
+        self.__interpreter.allocate_tensors()
+        self.__input_details = self.__interpreter.get_input_details()
+        self.__output_details = self.__interpreter.get_output_details()
 
         prototxtPath = "models/deploy.prototxt"
         weightsPath = "models/res10_300x300_ssd_iter_140000.caffemodel"
@@ -75,10 +75,14 @@ class Utils:
     def get_distance_blue(self, img, par):
         print(img)
         hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-
+        u = np.uint8([[[0, 0, 255]]])
+        print(np.array(cv2.cvtColor(u, cv2.COLOR_BGR2HSV)))
+        
         if par == 0:
-            lower_blue = np.array([80, 60, 60])
-            upper_blue = np.array([120, 160, 160])
+            lower_blue = np.array([99,160,99])
+            upper_blue = np.array([109,255,255])
+            #upper_blue = np.array([115, 170, 255])
+            #lower_blue = np.array([100, 170, 255])
         elif par == 1:
             lower_blue = np.array([0,0,0])
             upper_blue = np.array([255,50,50])
