@@ -11,16 +11,16 @@ class Utils:
     def __init__(self):
         self.__interpreter = tf.lite.Interpreter("models/model.tflite")
         self.__interpreter.allocate_tensors()
-        self.__input_details = self.__interpreter.get_input_details()
-        self.__output_details = self.__interpreter.get_output_details()
+        self.__inputDetails = self.__interpreter.get_input_details()
+        self.__outputDetails = self.__interpreter.get_output_details()
 
         prototxtPath = "models/deploy.prototxt"
         weightsPath = "models/res10_300x300_ssd_iter_140000.caffemodel"
         self.__faceNet = cv2.dnn.readNet(prototxtPath, weightsPath)
     
     # grab the dimensions of the frame and then construct a blob from it
-    def detect_and_predict_mask(self, frame):
-        global output_data
+    def detectAndPredictMask(self, frame):
+        global outputData
         (h, w) = frame.shape[:2]
         blob = cv2.dnn.blobFromImage(frame, 1.0, (224, 224),
                                      (104.0, 177.0, 123.0))
@@ -63,29 +63,29 @@ class Utils:
             self.__interpreter.set_tensor(self.__input_details[0]["index"], faces)
             self.__interpreter.invoke()
 
-            output_data = self.__interpreter.get_tensor(self.__output_details[0]["index"])
+            outputData = self.__interpreter.get_tensor(self.__output_details[0]["index"])
 
-        print(output_data)
-        return locs, output_data
+        print(outputData)
+        return locs, outputData
     
     # returns left/right of the middle with how many pixels to the middle and
     # up/down of the middle with how many pixels to the middle
     # 0 = blue line
     # 1 = black line
-    def get_distance_blue(self, img, par):
+    def getDistanceBlue(self, img, par):
         print(img)
         hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
         if par == 0:
-            lower_blue = np.array([99,160,99])
-            upper_blue = np.array([109,255,255])
+            lowerBlue = np.array([99,160,99])
+            upperBlue = np.array([109,255,255])
             #upper_blue = np.array([115, 170, 255])
             #lower_blue = np.array([100, 170, 255])
         elif par == 1:
-            lower_blue = np.array([0,0,0])
-            upper_blue = np.array([255,50,50])
+            lowerBlue = np.array([0,0,0])
+            upperBlue = np.array([255,50,50])
             
-        maskBlue = cv2.inRange(hsv, lower_blue, upper_blue)
+        maskBlue = cv2.inRange(hsv, lowerBlue, upperBlue)
 
         resBlue = cv2.bitwise_and(img, img, mask=maskBlue)
 
@@ -95,31 +95,31 @@ class Utils:
 
         try:
             contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-            img_contours = img
+            imgContours = img
 
-            max_area = 0
-            max_contour = contours[0]
+            maxArea = 0
+            maxContour = contours[0]
             # Goes through all the contours and tries to find the biggest one.
             for cnt in contours:
                 area = cv2.contourArea(cnt)
-                if max_area < area:
-                    max_area = area
-                    max_contour = cnt
+                if maxArea < area:
+                    maxArea = area
+                    maxContour = cnt
 
             # Get and show the rectangle around the biggest contour.
-            x, y, w, h = cv2.boundingRect(max_contour)
-            cv2.rectangle(img_contours, (x, y), (x + w, y + h), (0, 255, 0), 2)
+            x, y, w, h = cv2.boundingRect(maxContour)
+            cv2.rectangle(imgContours, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
             # Show the biggest contour.
-            cv2.drawContours(img_contours, [max_contour], -1, (0, 255, 255), 3)
+            cv2.drawContours(imgContours, [maxContour], -1, (0, 255, 255), 3)
 
             # Find the center of mass and show as a circle.
-            M = cv2.moments(max_contour)
+            M = cv2.moments(maxContour)
             cx = int(M['m10'] / M['m00'])
             cy = int(M['m01'] / M['m00'])
-            cv2.circle(img_contours, (cx, cy), 3, (0, 255, 255), -1)
+            cv2.circle(imgContours, (cx, cy), 3, (0, 255, 255), -1)
 
-            cv2.imshow("img", img_contours)
+            cv2.imshow("img", imgContours)
 
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 return ""
@@ -130,14 +130,14 @@ class Utils:
             # Check where the biggest contour is located with a margin (dist_pix)
             if cx < width / 2:
                 if cy < height / 2:
-                    return "left", width / 2 - cx, h < dist_pix
+                    return "left", width / 2 - cx, h < distPix
                 else:
-                    return "left", width / 2 - cx, "down", h < dist_pix
+                    return "left", width / 2 - cx, "down", h < distPix
             else:
                 if cy < height / 2:
-                    return "right", cx - width / 2, "up", h < dist_pix
+                    return "right", cx - width / 2, "up", h < distPix
                 else:
-                    return "right", cx - width / 2, "down", h < dist_pix
+                    return "right", cx - width / 2, "down", h < distPix
         except:
             cv2.imshow("img", img)
             if cv2.waitKey(1) & 0xFF == ord('q'):

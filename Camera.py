@@ -12,7 +12,7 @@ class Camera:
         print("Camera initialized")
 
     # returns image array
-    def get_image(self):
+    def getImage(self):
         _, frame = self.__camera.read()
 
         # rotate image 180, camera is upside down due to design
@@ -20,7 +20,7 @@ class Camera:
         return frame
 
     # close video stream to resolve "camera already in use error"
-    def close_video(self):
+    def closeVideo(self):
         self.__camera.release()
 
 

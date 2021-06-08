@@ -11,7 +11,7 @@ class Weight:
         self.__hx711.reset()
         print("Weight init")
 
-    def get_weight(self):
+    def getWeight(self):
         measures = self.__hx711.get_raw_data()
         measures = np.asarray(measures)
         results = []
@@ -21,7 +21,3 @@ class Weight:
         #print(results)
         print(str(np.average(results)) + "g")
         return str(np.average(results)) + "g"
-#96823 -548
-#weight = Weight()
-#while True:
-#    weight.get_weight()
