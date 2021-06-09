@@ -7,20 +7,12 @@ class Camera:
     """
 
     def __init__(self):
+        super().__init__()
         self.__camera = cv2.VideoCapture(-1)
-        # self.__last_image = None
         print("Camera initialized")
 
     # returns image array
-    def getImage(self):
-        _, frame = self.__camera.read()
-
-        # rotate image 180, camera is upside down due to design
-        frame = cv2.rotate(frame, cv2.ROTATE_180)
-        return frame
-
-    # close video stream to resolve "camera already in use error"
-    def closeVideo(self):
-        self.__camera.release()
+    def get_image(self):
+        return self.__camera.read()
 
 
