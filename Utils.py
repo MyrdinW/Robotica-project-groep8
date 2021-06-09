@@ -1,7 +1,7 @@
 import numpy as np
 import cv2
 
-dist_pix = 300
+distPix = 300
 import tensorflow as tf
 from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
 from tensorflow.keras.preprocessing.image import img_to_array
@@ -67,13 +67,43 @@ class Utils:
 
         print(outputData)
         return locs, outputData
-    
+
+    def hasCup(self, hierarchy, contours):
+        max_area = 0
+        hierarchy = hierarchy[0]
+        try:
+            for cnr in range(len(contours)):
+                cnt = contours[cnr]
+                area = cv2.contourArea(cnt)
+                if max_area < area:
+                    max_area = area
+                    holes = 0
+                    child = hierarchy[cnr][2]
+                    while child >= 0:
+                        holes += 1
+                        child = hierarchy[child][0]
+                    if holes > 0:
+                        obstacle = contours[child]
+                        x, y, w, h = cv2.boundingRect(obstacle)
+
+            height = img.shape[0]
+
+            M = cv2.moments(obstacle)
+            cy = int(M['m01'] / M['m00'])
+
+            if cy < height - 200:
+                return False
+            else:
+                return True
+        except:
+            return False
+
     # returns left/right of the middle with how many pixels to the middle and
     # up/down of the middle with how many pixels to the middle
     # 0 = blue line
     # 1 = black line
     def getDistanceBlue(self, img, par):
-        print(img)
+        # print(img)
         hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
         if par == 0:
@@ -83,7 +113,7 @@ class Utils:
             #lower_blue = np.array([100, 170, 255])
         elif par == 1:
             lowerBlue = np.array([0,0,0])
-            upperBlue = np.array([255,50,50])
+            upperBlue = np.array([255,100,100])
             
         maskBlue = cv2.inRange(hsv, lowerBlue, upperBlue)
 
@@ -93,55 +123,94 @@ class Utils:
 
         thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
 
-        try:
-            contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-            imgContours = img
 
-            maxArea = 0
-            maxContour = contours[0]
-            # Goes through all the contours and tries to find the biggest one.
-            for cnt in contours:
-                area = cv2.contourArea(cnt)
-                if maxArea < area:
-                    maxArea = area
-                    maxContour = cnt
+        contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        imgContours = img
+        if par == 0:
+            try:
+                maxArea = 0
+                maxContour = contours[0]
+                # Goes through all the contours and tries to find the biggest one.
+                for cnt in contours:
+                    area = cv2.contourArea(cnt)
+                    if maxArea < area:
+                        maxArea = area
+                        maxContour = cnt
 
-            # Get and show the rectangle around the biggest contour.
-            x, y, w, h = cv2.boundingRect(maxContour)
-            cv2.rectangle(imgContours, (x, y), (x + w, y + h), (0, 255, 0), 2)
+                # Get and show the rectangle around the biggest contour.
+                x, y, w, h = cv2.boundingRect(maxContour)
+                cv2.rectangle(imgContours, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
-            # Show the biggest contour.
-            cv2.drawContours(imgContours, [maxContour], -1, (0, 255, 255), 3)
+                # Show the biggest contour.
+                cv2.drawContours(imgContours, [maxContour], -1, (0, 255, 255), 3)
 
-            # Find the center of mass and show as a circle.
-            M = cv2.moments(maxContour)
-            cx = int(M['m10'] / M['m00'])
-            cy = int(M['m01'] / M['m00'])
-            cv2.circle(imgContours, (cx, cy), 3, (0, 255, 255), -1)
+                # Find the center of mass and show as a circle.
+                M = cv2.moments(maxContour)
+                cx = int(M['m10'] / M['m00'])
+                cy = int(M['m01'] / M['m00'])
+                cv2.circle(imgContours, (cx, cy), 3, (0, 255, 255), -1)
 
-            cv2.imshow("img", imgContours)
+                cv2.imshow("img", imgContours)
 
-            if cv2.waitKey(1) & 0xFF == ord('q'):
+                if cv2.waitKey(1) & 0xFF == ord('q'):
+                    return ""
+
+                width = img.shape[1]
+                height = img.shape[0]
+
+                # Check where the biggest contour is located with a margin (dist_pix)
+                if cx < width / 2:
+                    if cy < height / 2:
+                        return "left", width / 2 - cx, h < distPix
+                    else:
+                        return "left", width / 2 - cx, "down", h < distPix
+                else:
+                    if cy < height / 2:
+                        return "right", cx - width / 2, "up", h < distPix
+                    else:
+                        return "right", cx - width / 2, "down", h < distPix
+
+            except:
+                cv2.imshow("img", img)
+                if cv2.waitKey(1) & 0xFF == ord('q'):
+                    return ""
+                return ""
+        elif par == 1:
+            try:
+                max_area = 0
+                maxContour = contours[0]
+                hierarchy = hierarchy[0]
+
+                for cnr in range(len(contours)):
+                    cnt = contours[cnr]
+                    area = cv2.contourArea(cnt)
+                    if max_area < area:
+                        max_area = area
+                        max_contour = cnt
+
+                    height = img.shape[0]
+                    width = img.shape[1]
+
+                    cv2.drawContours(imgContours, [maxContour], -1, (0, 255, 255), 3)
+                    cv2.imshow("img", imgContours)
+
+                    M = cv2.moments(maxContour)
+                    cx = int(M['m10'] / M['m00'])
+                    cy = int(M['m01'] / M['m00'])
+
+                    if cx < width / 2:
+                        if cy < height / 2:
+                            return "left", width / 2 - cx, self.hasCup(hierarchy, contours)
+                        else:
+                            return "left", width / 2 - cx, self.hasCup(hierarchy, contours), "down"
+                    else:
+                        if cy < height / 2:
+                            return "right", cx - width / 2, self.hasCup(hierarchy, contours), "up"
+                        else:
+                            return "right", cx - width / 2, self.hasCup(hierarchy, contours), "down"
+            except:
+                cv2.imshow("img", img)
+                if cv2.waitKey(1) & 0xFF == ord('q'):
+                    return ""
                 return ""
 
-            width = img.shape[1]
-            height = img.shape[0]
-
-            # Check where the biggest contour is located with a margin (dist_pix)
-            if cx < width / 2:
-                if cy < height / 2:
-                    return "left", width / 2 - cx, h < distPix
-                else:
-                    return "left", width / 2 - cx, "down", h < distPix
-            else:
-                if cy < height / 2:
-                    return "right", cx - width / 2, "up", h < distPix
-                else:
-                    return "right", cx - width / 2, "down", h < distPix
-        except:
-            cv2.imshow("img", img)
-            if cv2.waitKey(1) & 0xFF == ord('q'):
-                return ""
-            return ""
-    
-    
