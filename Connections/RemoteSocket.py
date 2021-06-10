@@ -17,18 +17,18 @@ class RemoteSocket:
 
     #listening to the port 
     def listen(self):
-        while True:
-            conn, addr = self.s.accept()
-            payload = conn.recv(1024)
-            #if len(payload) != 29:
-            #    return
-            payload = str(payload)
-            #splits the message and checks if the message starts with 00, then puts the data in an array
-            comp = payload.split("b'")[1].replace("')", "").replace("'", "").split(",")
-            if comp[0] == '00' :#and len(comp) == 32:
-                comp = comp[1:]
-                comp = list(map(int, comp))     
-                self.command = comp
+        conn, addr = self.s.accept()
+        payload = conn.recv(1024)
+        #if len(payload) != 29:
+        #    return
+        payload = str(payload)
+        #splits the message and checks if the message starts with 00, then puts the data in an array
+        comp = payload.split("b'")[1].replace("')", "").replace("'", "").split(",")
+        if comp[0] == '00' :#and len(comp) == 32:
+            comp = comp[1:]
+            comp = list(map(int, comp))     
+            self.command = comp
+            
         
     def getCommand(self):
         return self.command
