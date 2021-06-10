@@ -9,7 +9,7 @@ class FollowColor:
         # try:
         #time0 = datetime.datetime.now()
         frame = self.__camera.getImage()
-        output = self.__utils.getDistanceBlue(frame, 1)
+        output = self.__utils.getDistanceBlue(frame, 0)
         #print(datetime.datetime.now() - time0)
         print(output)
 

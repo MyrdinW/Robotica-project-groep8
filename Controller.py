@@ -81,12 +81,12 @@ class Controller:
             self.__remoteSocket.clearCommand()
         
             if self.__command is None:
-                time.sleep(0.5)
+                time.sleep(0.05)
                 continue 
 
             #check if mode is the same, if it is continue
             if self.__mode == self.__command[0]:
-                time.sleep(0.5)
+                time.sleep(0.05)
                 continue
             
             #mode is not the same so change mode 
@@ -125,25 +125,32 @@ class Controller:
 
     #function for moving the robot
     def moveRobot(self):
+        print("moverobot")
         while self.__mode == 1:
-            self.__remote.setJoyPositions(self.__command[1], self.__command[2], self.__command[3], self.__command[4])
+            self.__remote.setJoyPositions([self.__command[1], self.__command[2], self.__command[3], self.__command[4]])
             input1 = self.__remote.getPosition('y1')
             input2 = self.__remote.getPosition('y2')
             self.__driver.moveTrackControl(input1, input2)
+            if input1 != 0 or input2 != 0:
+                print("moving robot")
         self.__driver.moveTrackControl(0, 0)
 
     #function for moving the gripper
     def moveGripper(self):
+        print("movegripper")
         while self.__mode == 2:
-            self.__remote.setJoyPositions(self.__command[1], self.__command[2], self.__command[3], self.__command[4])
+            self.__remote.setJoyPositions([self.__command[1], self.__command[2], self.__command[3], self.__command[4]])
             self.__remote.setMagnet(self.__command[5])
             y1 = self.__remote.getPosition('y1')
             self.__driver.moveGripper(y1, self.__remote.getMagnet())
+            if y1 != 0:
+                print("moving gripper")
         self.__driver.moveGripper(0, 0)
 
 
     # function for folling the car with the blue block
     def followCar(self):
+        print("followcar")
         self.__driver.moveCamera(200)
         followColor = FollowColor(self.__camera, self.__utils, self.__driver)
         while self.__mode == 3:
@@ -151,8 +158,10 @@ class Controller:
         self.__camera.closeVideo()
         cv2.destroyAllWindows()
     
+
            
     def followLine(self):
+        print("followline")
         self.__driver.moveCamera(450)
         followLine = FollowLine(self.__camera, self.__utils, self.__driver)
         while self.__mode == 4:
