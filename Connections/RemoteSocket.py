@@ -37,5 +37,5 @@ class RemoteSocket:
         self.command = None
 
 
-if datetime.datetime.now() - lastTimeReceived == datetime.timedelta(microseconds = 500000):
-    command = [0]
+#if datetime.datetime.now() - lastTimeReceived == datetime.timedelta(microseconds = 500000):
+#    command = [0]

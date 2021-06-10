@@ -81,12 +81,12 @@ class Controller:
             self.__remoteSocket.clearCommand()
         
             if self.__command is None:
-                time.sleep(0.5)
+                time.sleep(0.05)
                 continue 
 
             #check if mode is the same, if it is continue
             if self.__mode == self.__command[0]:
-                time.sleep(0.5)
+                time.sleep(0.05)
                 continue
             
             #mode is not the same so change mode 
@@ -126,7 +126,7 @@ class Controller:
     #function for moving the robot
     def moveRobot(self):
         while self.__mode == 1:
-            self.__remote.setJoyPositions(self.__command[1], self.__command[2], self.__command[3], self.__command[4])
+            self.__remote.setJoyPositions([self.__command[1], self.__command[2], self.__command[3], self.__command[4]])
             input1 = self.__remote.getPosition('y1')
             input2 = self.__remote.getPosition('y2')
             self.__driver.moveTrackControl(input1, input2)
@@ -135,7 +135,7 @@ class Controller:
     #function for moving the gripper
     def moveGripper(self):
         while self.__mode == 2:
-            self.__remote.setJoyPositions(self.__command[1], self.__command[2], self.__command[3], self.__command[4])
+            self.__remote.setJoyPositions([self.__command[1], self.__command[2], self.__command[3], self.__command[4]])
             self.__remote.setMagnet(self.__command[5])
             y1 = self.__remote.getPosition('y1')
             self.__driver.moveGripper(y1, self.__remote.getMagnet())
@@ -151,6 +151,7 @@ class Controller:
         self.__camera.closeVideo()
         cv2.destroyAllWindows()
     
+
            
     def followLine(self):
         self.__driver.moveCamera(450)
