@@ -2,9 +2,13 @@ class Remote:
     def __init__(self):
         self.__positions = [0, 0, 0, 0] # 0 = x1, 1 = y1, 2 = x2, 3 = y2  // 0 - 1000
         self.__deadzone = [0, 439, 449, 1000],[0, 437, 447, 1000],[0, 450, 460, 1000],[0, 429, 439, 1000]
+        self.__magnet = False
 
     def setJoyPositions(self, positions):
         self.__positions = [positions[0], positions[1], positions[2], positions[3]]
+
+    def setMagnet(self, magnet):
+        self.__magnet = magnet
 
     def calcValue(self, axisInt):
         value = self.__positions[axisInt]
@@ -35,6 +39,9 @@ class Remote:
         if joystick == 'y2':
             return self.calcValue(3)
         return 0
+
+    def getMagnet(self):
+        return self.__magnet
     
     def getJoyPositions(self):
         return self.__positions

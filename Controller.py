@@ -55,7 +55,7 @@ class Controller:
         self.__weight = Weight()
         self.__driver = MoveInstructions(self.__servoGripper, self.__servoCamera, self.__magnet, self.__engine1, self.__engine2)
         
-        self.__followColor = FollowColor(self.__camera, self.__utils, self.__driver)
+        self.__command = None
        
         
 
@@ -64,84 +64,101 @@ class Controller:
         threading.Thread(target=self.__camera.update).start()
         threading.Thread(target=self.__remoteSocket.listen).start()
         threading.Thread(target=self.startRobot).start()
-        time.sleep(2)
+       
         
 
-        #self.followLine()
+        
 
 
     # function for listening to the controller
     def startRobot(self):
         print("start listening to controller")
-        cameraOn = False
-        lastTimeReceived = datetime.datetime.now()
+        thread = None
         while True:
             print("listening")
 
-            command = self.__remoteSocket.getCommand()
+            self.__command = self.__remoteSocket.getCommand()
             self.__remoteSocket.clearCommand()
-            
-            if command is None:
-                if datetime.datetime.now() - lastTimeReceived == datetime.timedelta(microseconds = 500000):
-                    command = [0]
-            else:
-                
-                val = list(map(int, command))
-                # set joypositions
-                
-                print(val)
-            
-            
-            if self.__mode != val[0]:
-                self.__mode = val[0]
-                if cameraOn == True:
-                    self.cameraOn = False
-                    self.__camera.closeVideo()
-                    cv2.destroyAllWindows()
+        
+            if self.__command is None:
+                time.sleep(0.5)
+                continue 
 
+            #check if mode is the same, if it is continue
+            if self.__mode == self.__command[0]:
+                time.sleep(0.5)
+                continue
+            
+            #mode is not the same so change mode 
+            self.__mode = self.__command[0]
+
+            #if a thread is already running 
+            if thread != None:
+                thread.join()
+            
             # mode 0 = sleep
-            if val[0] == 0:
+            if self.__mode == 0:
                 self.__driver.move(0, 0)
                 self.__driver.moveGripper(0)
                 time.sleep(0.5)
                 continue
-            self.__remote.setJoyPositions([val[1], val[2], val[3], val[4]])
+
             # mode 1 = drive
             if self.__mode == 1:
-                input1 = self.__remote.getPosition('y1')
-                input2 = self.__remote.getPosition('y2')
-                self.__driver.moveTrackControl(input1, input2)
+                thread = threading.Thread(target=self.moveRobot).start()
                 continue
 
             # mode 2 = move gripper
             if self.__mode == 2:
-                y1 = self.__remote.getPosition('y1')
-                self.__driver.moveGripper(y1, val[5])
-                time.sleep(0.05)
+                thread = threading.Thread(target=self.moveGripper).start()
                 continue
 
             # mode 3 = following blue car
             if self.__mode == 3:
-                if cameraOn != True:
-                    cameraOn = True
-                self.followColor()
+                thread = threading.Thread(target=self.followCar).start()
                 continue
 
-            
+             # mode 3 = following line
+            if self.__mode == 3:
+                thread = threading.Thread(target=self.followLine).start()
+                continue
+
+    #function for moving the robot
+    def moveRobot(self):
+        while self.__mode == 1:
+            self.__remote.setJoyPositions(self.__command[1], self.__command[2], self.__command[3], self.__command[4])
+            input1 = self.__remote.getPosition('y1')
+            input2 = self.__remote.getPosition('y2')
+            self.__driver.moveTrackControl(input1, input2)
+        self.__driver.moveTrackControl(0, 0)
+
+    #function for moving the gripper
+    def moveGripper(self):
+        while self.__mode == 2:
+            self.__remote.setJoyPositions(self.__command[1], self.__command[2], self.__command[3], self.__command[4])
+            self.__remote.setMagnet(self.__command[5])
+            y1 = self.__remote.getPosition('y1')
+            self.__driver.moveGripper(y1, self.__remote.getMagnet())
+        self.__driver.moveGripper(0, 0)
+
 
     # function for folling the car with the blue block
-    def followColor(self):
-        try:
-            self.__driver.moveCamera(200)
-
-            self.__followColor.run()
-        except:
-            pass
-
+    def followCar(self):
+        self.__driver.moveCamera(200)
+        followColor = FollowColor(self.__camera, self.__utils, self.__driver)
+        while self.__mode == 3:
+            followColor.run()
+        self.__camera.closeVideo()
+        cv2.destroyAllWindows()
+    
+           
     def followLine(self):
         self.__driver.moveCamera(450)
         followLine = FollowLine(self.__camera, self.__utils, self.__driver)
-        followLine.run()
+        while self.__mode == 4:
+            followLine.run()
+        self.__camera.closeVideo()
+        cv2.destroyAllWindows()
 
 
     # function for detecting is someone wears a mask

@@ -26,7 +26,8 @@ class RemoteSocket:
             #splits the message and checks if the message starts with 00, then puts the data in an array
             comp = payload.split("b'")[1].replace("')", "").replace("'", "").split(",")
             if comp[0] == '00' :#and len(comp) == 32:
-                comp = comp[1:]        
+                comp = comp[1:]
+                comp = list(map(int, comp))     
                 self.command = comp
         
     def getCommand(self):
@@ -35,3 +36,6 @@ class RemoteSocket:
     def clearCommand(self):
         self.command = None
 
+
+if datetime.datetime.now() - lastTimeReceived == datetime.timedelta(microseconds = 500000):
+    command = [0]
