@@ -8,11 +8,9 @@ class MoveInstructions:
 
         # Moves gripper with x and y value of joystick
 
-    def moveGripper(self, joypos, magnet = None):
+    def moveGripper(self, joypos):
         try:
             self.__servoGripper.moveUnlimited(joypos)
-            if magnet is not None:
-                self.__magnet.switch(magnet)
         except:
             print("moving gripper failed")
 
@@ -36,3 +34,6 @@ class MoveInstructions:
         self.__engine2.setValue(righttrack)
         #except:
         #    print("moving robot failed(trackcontrol)")
+
+    def powerMagnet(self, value):
+        self.__magnet.switch(value)

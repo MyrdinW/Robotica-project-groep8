@@ -134,25 +134,40 @@ class Controller:
     def moveRobot(self):
         print("moverobot")
         while self.__mode == 1:
+            #code for magnet 
+            if self.__remote.getMagnet != self.__command[5]:
+                self.__remote.setMagnet(self.__command[5])
+                self.__driver.powerMagnet(self.__remote.getMagnet())
+            #code for motors
             self.__remote.setJoyPositions([self.__command[1], self.__command[2], self.__command[3], self.__command[4]])
             input1 = self.__remote.getPosition('y1')
             input2 = self.__remote.getPosition('y2')
             self.__driver.moveTrackControl(input1, input2)
+            #if motors need to move print in console 
             if input1 != 0 or input2 != 0:
                 print("moving robot")
+            time.sleep(0.1)
+        #turn motors off when exiting the mode 
         self.__driver.moveTrackControl(0, 0)
 
     # function for moving the gripper
     def moveGripper(self):
         print("movegripper")
         while self.__mode == 2:
+            #code for magnet 
+            if self.__remote.getMagnet != self.__command[5]:
+                self.__remote.setMagnet(self.__command[5])
+                self.__driver.powerMagnet(self.__remote.getMagnet())
+            #code for servo
             self.__remote.setJoyPositions([self.__command[1], self.__command[2], self.__command[3], self.__command[4]])
-            self.__remote.setMagnet(self.__command[5])
             y1 = self.__remote.getPosition('y1')
-            self.__driver.moveGripper(y1, self.__remote.getMagnet())
+            self.__driver.moveGripper(y1)
+            #print to console when the gripper moves 
             if y1 != 0:
                 print("moving gripper")
-        self.__driver.moveGripper(0, 0)
+            time.sleep(0.1)
+        #turn servos off when exiting the mode
+        self.__driver.moveGripper(0)
     
     # Robot dance command
     def lineDance(self):
