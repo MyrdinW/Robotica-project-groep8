@@ -1,20 +1,16 @@
 import cv2
 import imutils
-from Light import Light
 
 
 class Mask:
-    def __init__(self, camera, utils, driver):
+    def __init__(self, camera, utils, driver, light):
         self.__camera = camera
         self.__utils = utils
-
+        self.__driver = driver
+        self.__light = light
 
 
     def run(self):
-
-        # assign image to access_granted or access_denied
-        access_granted = cv2.imread("/image/granted.png")
-        access_denied = cv2.imread("/image/denied.png")
 
         # checks if the label has changed
         class ValueCache(object):
@@ -68,9 +64,9 @@ class Mask:
                 if value != new_value:
                     value = new_value
                     if value == "Mask":
-                        cv2.imshow("access", access_granted)
+                        self.__light.changeLights(color = (0, 255, 0, 0))
                     else:
-                        cv2.imshow("access", access_denied)
+                        self.__light.changeLights(color = (255, 0, 0, 0))
 
             except:
                 pass

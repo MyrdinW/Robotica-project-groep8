@@ -11,14 +11,14 @@ class Servo:
     # follow line : 450
     # follow block : 224
     def move(self, position):
-        self.__position = position
         self.__servos.move(self.__id, position)
         self.__servos.action()
+        self.__position = self.__servos.readPosition(1)
 
     def moveSpeed(self, position, speed):
-        self.__position = position
         self.__servos.moveSpeed(self.__id, position, speed)
         self.__servos.action()
+        self.__position = self.__servos.readPosition(1)
     
     def moveUnlimited(self, speed):
         if speed < 0:

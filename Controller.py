@@ -1,33 +1,28 @@
-import cv2
-import imutils
+import threading
 import threading
 import time
-import datetime
 
-
-from Utils import Utils
-
-# import class that handles movements
-
-from Connections.RemoteSocket import RemoteSocket
-
-# import Action classes
-from Actions.MoveInstructions import MoveInstructions
+from Actions.Dance import Dance
 from Actions.FollowColor import FollowColor
 from Actions.FollowLine import FollowLine
 from Actions.LineDance import LineDance
-from Actions.Dance import Dance
 from Actions.Mask import Mask
-
-# import all components
-from Component.Remote import Remote
+# import Action classes
+from Actions.MoveInstructions import MoveInstructions
 from Component.Camera import Camera
 from Component.Engine import Engine
 from Component.Light import Light
 from Component.Magnet import Magnet
 from Component.Microphone import Microphone
+# import all components
+from Component.Remote import Remote
 from Component.Servo import Servo
 from Component.Weight import Weight
+from Connections.RemoteSocket import RemoteSocket
+from Utils import Utils
+
+
+# import class that handles movements
 # from Component.Sound import Sound
 
 
