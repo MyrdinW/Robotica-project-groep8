@@ -9,6 +9,7 @@ class FollowColor:
         # try:
         #time0 = datetime.datetime.now()
         frame = self.__camera.getImage()
+        print(frame)
         output = self.__utils.getDistanceBlue(frame, 0)
         #print(datetime.datetime.now() - time0)
         print(output)
@@ -19,7 +20,7 @@ class FollowColor:
             return
 
         #if the blue block is in the middle do nothing
-        if output[1] < 100:
+        if output[1] < 50:
             self.__driver.move(0, 0)
             return
 

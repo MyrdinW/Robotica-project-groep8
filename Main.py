@@ -54,4 +54,4 @@ class ComponentsView(FlaskView):
 ComponentsView.register(app, route_base="/api/")
 
 # run site
-# app.run()
+app.run(host='0.0.0.0')

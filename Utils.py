@@ -104,6 +104,7 @@ class Utils:
     # 1 = black line
     def getDistanceBlue(self, img, par):
         # print(img)
+        print(img)
         hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
         if par == 0:

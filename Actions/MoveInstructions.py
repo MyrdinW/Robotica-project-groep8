@@ -16,9 +16,13 @@ class MoveInstructions:
         except:
             print("moving gripper failed")
 
+    # move camera with 1/2 speed
     def moveCamera(self, position):
         self.__servoCamera.moveSpeed(position, 500)
-    
+
+# m    # move camera max speed
+    def moveCameraMax(self, position):
+        self.__servoCamera.move(position)
 
     # Moves robot with x and y value of joystick
     def move(self, speed, direction):
@@ -32,6 +36,7 @@ class MoveInstructions:
 
     def moveTrackControl(self, lefttrack, righttrack):
         #try:
+        print(str(lefttrack) + " " + str(righttrack))
         self.__engine1.setValue(lefttrack)
         self.__engine2.setValue(righttrack)
         #except:

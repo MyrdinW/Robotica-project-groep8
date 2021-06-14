@@ -15,6 +15,8 @@ from Connections.RemoteSocket import RemoteSocket
 from Actions.MoveInstructions import MoveInstructions
 from Actions.FollowColor import FollowColor
 from Actions.FollowLine import FollowLine
+from Actions.LineDance import LineDance
+from Actions.Dance import Dance
 from Actions.Mask import Mask
 
 # import all components
@@ -56,131 +58,159 @@ class Controller:
         self.__driver = MoveInstructions(self.__servoGripper, self.__servoCamera, self.__magnet, self.__engine1, self.__engine2)
         
         self.__command = None
-       
-        
+        self.__followColor = FollowColor(self.__camera, self.__utils, self.__driver)
+        self.__followLine = FollowLine(self.__camera, self.__utils, self.__driver)
+        self.__mask = Mask(self.__camera, self.__utils, self.__driver, self.__light)
+        self.__lineDance = LineDance(self.__microphone, self.__light, self.__driver)
 
         # listen to remote on different thread
         # keep update frame in Camera on different thread
         threading.Thread(target=self.__camera.update).start()
+        time.sleep(3)
         threading.Thread(target=self.__remoteSocket.listen).start()
         threading.Thread(target=self.startRobot).start()
        
-        
-
-        
-
-
     # function for listening to the controller
     def startRobot(self):
         print("start listening to controller")
-        thread = None
+        # thread = None
         while True:
-            print("listening")
-
             self.__command = self.__remoteSocket.getCommand()
             self.__remoteSocket.clearCommand()
-        
+            
             if self.__command is None:
-                time.sleep(0.05)
+                time.sleep(0.1)
                 continue 
-
-            #check if mode is the same, if it is continue
-            if self.__mode == self.__command[0]:
-                time.sleep(0.05)
-                continue
             
             #mode is not the same so change mode 
             self.__mode = self.__command[0]
-
-            #if a thread is already running 
-            if thread != None:
-                thread.join()
             
             # mode 0 = sleep
             if self.__mode == 0:
                 self.__driver.move(0, 0)
                 self.__driver.moveGripper(0)
-                time.sleep(0.5)
+                time.sleep(0.1)
                 continue
-
+            
             # mode 1 = drive
             if self.__mode == 1:
-                thread = threading.Thread(target=self.moveRobot).start()
+                self.moveRobot()
                 continue
 
             # mode 2 = move gripper
             if self.__mode == 2:
-                thread = threading.Thread(target=self.moveGripper).start()
+                self.moveGripper()
                 continue
 
             # mode 3 = following blue car
             if self.__mode == 3:
-                thread = threading.Thread(target=self.followCar).start()
+                position = self.__servoCamera.getPosition()
+                if 190 < position < 210:
+                    self.__driver.moveCamera(200)
+                self.followCar()
+                
                 continue
 
-             # mode 3 = following line
-            if self.__mode == 3:
-                thread = threading.Thread(target=self.followLine).start()
+             # mode 4 = following line
+            if self.__mode == 4:
+                position = self.__servoCamera.getPosition()
+                if 440 < position < 460:
+                    self.__driver.moveCamera(450)
+                self.followLine()
                 continue
-
+            
+             # mode 5 = mask
+            if self.__mode == 5:
+                position = self.__servoCamera.getPosition()
+                if 540 < position < 560:
+                    self.__driver.moveCamera(550)
+                self.mask()
+                continue
+            
+            # mode 6 = dance
+            if self.__mode == 6:
+                #eigen muziek
+                self.dance()
+                continue
+            
+            # mode 7 = linedacne
+            if self.__mode == 7:
+                self.lineDance()
+                continue
+            
     #function for moving the robot
     def moveRobot(self):
         print("moverobot")
-        while self.__mode == 1:
+        try:
             self.__remote.setJoyPositions([self.__command[1], self.__command[2], self.__command[3], self.__command[4]])
+            self.__remote.setMagnet(self.__command[5])
             input1 = self.__remote.getPosition('y1')
             input2 = self.__remote.getPosition('y2')
             self.__driver.moveTrackControl(input1, input2)
+            self.__driver.moveGripper(0, self.__remote.getMagnet())
             if input1 != 0 or input2 != 0:
                 print("moving robot")
+        except:
+            print("moving robot failed")
+        time.sleep(0.1)
         self.__driver.moveTrackControl(0, 0)
 
     #function for moving the gripper
     def moveGripper(self):
         print("movegripper")
-        while self.__mode == 2:
+        try:
             self.__remote.setJoyPositions([self.__command[1], self.__command[2], self.__command[3], self.__command[4]])
             self.__remote.setMagnet(self.__command[5])
             y1 = self.__remote.getPosition('y1')
+            y2 = self.__remote.getPosition('y2')
             self.__driver.moveGripper(y1, self.__remote.getMagnet())
             if y1 != 0:
-                print("moving gripper")
-        self.__driver.moveGripper(0, 0)
+                pass
+                # print("moving gripper")
+            if 0.9 <= y2 <= 1.0:
+                print("moving up")
+                self.__servoCamera.moveSpeed(self.__servoCamera.getPosition() - 20, 150)
+                time.sleep(0.1)
+            elif -1.0 <= y2 <= -0.9:
+                print("moving down")
+                self.__servoCamera.moveSpeed(self.__servoCamera.getPosition() + 20, 150)
+                time.sleep(0.1)
+            print(y2)
+        except Exception as e:
+            print(e)
 
-
+    
+    
+    
     # function for folling the car with the blue block
     def followCar(self):
         print("followcar")
-        self.__driver.moveCamera(200)
-        followColor = FollowColor(self.__camera, self.__utils, self.__driver)
-        while self.__mode == 3:
-            followColor.run()
-        self.__camera.closeVideo()
-        cv2.destroyAllWindows()
+        self.__followColor.run()
+        # cv2.destroyAllWindows()
     
-
            
     def followLine(self):
         print("followline")
-        self.__driver.moveCamera(450)
-        followLine = FollowLine(self.__camera, self.__utils, self.__driver)
-        while self.__mode == 4:
-            followLine.run()
-        self.__camera.closeVideo()
-        cv2.destroyAllWindows()
+        self.__followLine.run()
+        # cv2.destroyAllWindows()
 
 
     # function for detecting is someone wears a mask
     def mask(self):
-        self.__driver.moveCamera(550)
-        mask = Mask(self.__camera, self.__utils, self.__driver)
-        mask.run()
+        print("mask")
+        self.__mask.run()
+        # cv2.destroyAllWindows()
 
-    # Robot dance command
+    # Robot (hardcoded) dance command
     def dance(self):
-        dance = Dance(self.__microphone, self.__light)
-        dance.run()
+        dance = Dance()
+        #dance.run()
 
+    # Robot (on music interpretated) LineDance command
+    def lineDance(self):
+        lineDance = LineDance(self.__microphone, self.__light, self.__driver)
+        lineDance.run()
+        
     # returns all components
     def getComponents(self):
         return self.__camera, self.__servoGripper, self.__light, self.__engine1, self.__engine2, self.__microphone, self.__weight

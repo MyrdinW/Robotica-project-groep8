@@ -8,6 +8,7 @@ class RemoteSocket:
     def __init__(self):
         host='0.0.0.0'
         port=5675
+        #self.s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) #UDP
         self.s = socket.socket()
         self.s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.s.bind((host,port))
@@ -19,23 +20,22 @@ class RemoteSocket:
     def listen(self):
         while True:
             conn, addr = self.s.accept()
+            #payload = self.s.recv(32) #UDP
             payload = conn.recv(1024)
+            # print(payload)
             #if len(payload) != 29:
             #    return
             payload = str(payload)
+            #print(payload)
             #splits the message and checks if the message starts with 00, then puts the data in an array
             comp = payload.split("b'")[1].replace("')", "").replace("'", "").split(",")
             if comp[0] == '00' :#and len(comp) == 32:
                 comp = comp[1:]
                 comp = list(map(int, comp))     
                 self.command = comp
-        
+    
     def getCommand(self):
         return self.command
 
     def clearCommand(self):
         self.command = None
-
-
-#if datetime.datetime.now() - lastTimeReceived == datetime.timedelta(microseconds = 500000):
-#    command = [0]

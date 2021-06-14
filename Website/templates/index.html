@@ -26,16 +26,28 @@
         console.log(data.weight)
       });
 
-      $.getJSON("http://127.0.0.1:5000/api/engine/",
+      $.getJSON("http://127.0.0.1:5000/api/engine1/",
         function (data) {
-          $('#engine_value').text(data.engine_value)
-          $('#engine_offset').text(data.engine_offset)
+          $('#engine1_value').text(data.engine1_value)
+          $('#engine1_offset').text(data.engine1_offset)
         });
 
-      $.getJSON("http://127.0.0.1:5000/api/servo/",
+      $.getJSON("http://127.0.0.1:5000/api/engine2/",
+        function (data) {
+          $('#engine2_value').text(data.engine1_value)
+          $('#engine2_offset').text(data.engine1_offset)
+        });
+
+      $.getJSON("http://127.0.0.1:5000/api/servocamera/",
         function (data) {
           $('#servo_value').text(data.servo_value)
           $('#servo_torque').text(data.servo_torque)
+        });
+
+        $.getJSON("http://127.0.0.1:5000/api/servogripper/",
+        function (data) {
+          $('#servogripper_value').text(data.servogripper_value)
+          $('#servogripper_torque').text(data.servogripper_torque)
         });
 
       $.get("http://127.0.0.1:5000/api/camera/",
@@ -65,7 +77,6 @@
   </script>
 
 <body onload="update_values()" class="opmaak">
-<!--<button id="update" onclick="update_values()">Click me!</button>-->
 <div>
 
   <!--Camera stream-->
@@ -90,26 +101,50 @@
 
   <h1>Telemetry</h1>
 
-    <!--Engine-->
-    <div class="engine">
-      <p>Engine:
-        <span id="engine_value">
-            <script>document.getElementById("engine_value").innerHTML</script>
+    <!--Engine 1-->
+    <div class="engine1">
+      <p>Engine 1:
+        <span id="engine1_value">
+            <script>document.getElementById("engine1_value").innerHTML</script>
         </span>
-        <span id="engine_offset">
-            <script>document.getElementById("engine_offset").innerHTML</script>
+        <span id="engine1_offset">
+            <script>document.getElementById("engine1_offset").innerHTML</script>
         </span>
       </p>
     </div>
 
-    <!--Servo-->
-    <div class="servo">
-      <p>Servo:
+      <!--Engine 2-->
+    <div class="engine2">
+      <p>Engine 2:
+        <span id="engine2_value">
+            <script>document.getElementById("engine2_value").innerHTML</script>
+        </span>
+        <span id="engine2_offset">
+            <script>document.getElementById("engine2_offset").innerHTML</script>
+        </span>
+      </p>
+    </div>
+
+    <!--Servo Gripper-->
+    <div class="servogripper">
+      <p>Servo Gripper:
         <span id="servo_value">
-            <script>document.getElementById("servo_value").innerHTML</script>
+            <script>document.getElementById("servogripper_value").innerHTML</script>
         </span>
         <span id="servo_torque">
-            <script>document.getElementById("servo_torque").innerHTML</script>
+            <script>document.getElementById("servogripper_torque").innerHTML</script>
+        </span>
+      </p>
+    </div>
+
+      <!--Servo Camera-->
+    <div class="servocamera">
+      <p>Servo Camera:
+        <span id="servocamera_value">
+            <script>document.getElementById("servocamera_value").innerHTML</script>
+        </span>
+        <span id="servocamera_torque">
+            <script>document.getElementById("servocamera_torque").innerHTML</script>
         </span>
       </p>
     </div>

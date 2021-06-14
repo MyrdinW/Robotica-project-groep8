@@ -1,13 +1,15 @@
 import cv2
 import imutils
+from Light import Light
+
 
 class Mask:
     def __init__(self, camera, utils, driver):
         self.__camera = camera
         self.__utils = utils
-        self.__driver = driver
-#         self.__light = Light(13)
-        
+
+
+
     def run(self):
 
         # assign image to access_granted or access_denied
@@ -26,17 +28,17 @@ class Mask:
                     self.label = new_label
                     return True
 
+        value = None
+        new_value = None
+
         # get frame from the video stream and resize it
-        for i in range(200):
+        for i in range(500):
             frame = self.__camera.getImage()
             frame = imutils.resize(frame, width=800)
 
             # detect faces in the frame and determine if they are wearing a mask
             try:
                 locs, preds = self.__utils.detectAndPredictMask(frame)
-
-                value = None
-                new_value = None
 
                 for (box, pred) in zip(locs, preds):
                     (startX, startY, endX, endY) = box
@@ -67,7 +69,6 @@ class Mask:
                     value = new_value
                     if value == "Mask":
                         cv2.imshow("access", access_granted)
-                        
                     else:
                         cv2.imshow("access", access_denied)
 

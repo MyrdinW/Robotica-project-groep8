@@ -1,14 +1,36 @@
 class Dance:
-    def __init__(self, microphone, light):
-        self.__microphone = microphone
-        self.__light = light
+    """
+    LineDance returns values needed for movement according to the peaks on low frequencies
+    through the # of leds, which references to a so called beat. 
+    (Needs upgrade according to addition of gripper)
+    """
 
+    def __init__(self, microphone):
+        self.__microphone = microphone
+        print("Dance initialized")
+    
     def run(self):
-        print("dance started")
-        timeDelta = datetime.timedelta(minutes=100)
-        timeEnd = datetime.datetime.now() + timeDelta
-        while datetime.datetime.now() < timeEnd:
+        while True:
             low, mid, high = self.__microphone.getMaxLights()
-            self.__light.setValues(low, mid, high)
-        self.__light.resetLights()
-        print("mic stopped")
+            
+
+    def getMovement(self,i,x,y):
+        #movement = (0,0)
+
+        if i >= 4:
+            if x >= 0 and y >= 0:
+                #movement = (-1, -1)
+                print("moving to the back")
+
+            elif x >= 0 and y < 0:
+                #movement = (-1, 1)
+                print("moving to the left")
+
+            elif x < 0 and y >= 0:
+                #movement = (1, -1)
+                print("moving to the right")
+
+            else:
+                #movement = (1, 1)
+                print("moving forward")
+        #return movement

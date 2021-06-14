@@ -7,6 +7,7 @@ class FollowLine:
     def run(self):
     
         frame = self.__camera.getImage()
+        print(frame)
         output = self.__utils.getDistanceBlue(frame, 1)
         
         if not output:
