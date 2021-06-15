@@ -1,4 +1,5 @@
 import datetime
+from Actions.DanceMoves import DanceMoves
 
 class LineDance:
     
@@ -6,6 +7,8 @@ class LineDance:
         self.__microphone = microphone
         self.__light = light
         self.__driver = driver
+        self.__danceMoves = DanceMoves(self.__driver)
+
 
     def getMovement(self,i,x,y):
         if i >= 4:
@@ -25,10 +28,6 @@ class LineDance:
                 self.__driver.move(1, 1)
                 print("moving forward")
 
-    def cameraBang(self):
-        self.__driver.moveCameraMax(0)
-        self.__driver.moveCameraMax(1000)
-
     def run(self):
         print("dance started")
         timeDelta = datetime.timedelta(minutes=2)
@@ -36,7 +35,8 @@ class LineDance:
         #while datetime.datetime.now() < timeEnd:
         low, mid, high = self.__microphone.getMaxLights()
         self.__light.setValues(low, mid, high)
-        self.getMovement(low, 0, 0)
+        # self.getMovement(low, 0, 0)
+        self.__danceMoves.headbang()
         self.__light.resetLights()
         print("mic stopped")
 

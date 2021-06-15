@@ -31,7 +31,7 @@ class Microphone:
         fig.savefig(image, format="jpg")
         image.seek(0)
         encodedImage = base64.b64encode(image.read())
-        return encoded_image
+        return encodedImage
 
     # Gets amounts of lights to be on for each frequency range
     def getMaxLights(self):

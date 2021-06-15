@@ -40,11 +40,15 @@ class ComponentsView(FlaskView):
 
     # returns value and torgue of servo
     def servo(self):
-        return jsonify(servo_value=servoObj.getValue(), servo_torque=servoObj.getTorque())
+        return jsonify(servo_value=0, servo_torque=0)
+
+   # returns value and torgue of engine
+    def engine1(self):
+        return jsonify(engine1_value=engine1Obj.getValue(), engine_offset=engine1Obj.getOffset())
 
     # returns value and torgue of engine
-    def engine(self):
-        return jsonify(engine1_value=engineObj.getValue(), engine_offset=engine1Obj.getOffset())
+    def engine2(self):
+        return jsonify(engine2_value=engine2Obj.getValue(), engine_offset=engine2Obj.getOffset())
 
     # returns weight in grams
     def weight(self):

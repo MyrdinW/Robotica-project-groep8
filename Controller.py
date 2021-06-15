@@ -1,7 +1,6 @@
 import threading
-import threading
 import time
-
+import cv2
 from Actions.Dance import Dance
 from Actions.FollowColor import FollowColor
 from Actions.FollowLine import FollowLine
@@ -64,27 +63,41 @@ class Controller:
         time.sleep(3)
         threading.Thread(target=self.__remoteSocket.listen).start()
         threading.Thread(target=self.startRobot).start()
+        threading.Thread(target=self.__weight.update()).start()
        
     # function for listening to the controller
     def startRobot(self):
         print("start listening to controller")
         # thread = None
+        counter = 0
         while True:
             self.__command = self.__remoteSocket.getCommand()
             self.__remoteSocket.clearCommand()
-            
+
             if self.__command is None:
-                time.sleep(0.1)
+                counter += 1
+                if counter == 20:
+                    print("lagging")
+                    self.__driver.move(0, 0)
+                    self.__driver.moveGripper(0)
+
+                time.sleep(0.01)
                 continue 
             
-            #mode is not the same so change mode 
-            self.__mode = self.__command[0]
-            
+
+            #print(delta)
+            counter = 0
+
+            if self.__mode != self.__command[0]:
+                cv2.destroyAllWindows()
+                self.__mode = self.__command[0]
+
+
             # mode 0 = sleep
             if self.__mode == 0:
                 self.__driver.move(0, 0)
                 self.__driver.moveGripper(0)
-                time.sleep(0.1)
+                time.sleep(0.5)
                 continue
             
             # mode 1 = drive
@@ -125,7 +138,7 @@ class Controller:
             # mode 6 = dance
             if self.__mode == 6:
                 #eigen muziek
-                self.dance()
+                #self.dance()
                 continue
             
             # mode 7 = linedacne
@@ -135,24 +148,23 @@ class Controller:
             
     #function for moving the robot
     def moveRobot(self):
-        print("moverobot")
+
         try:
             self.__remote.setJoyPositions([self.__command[1], self.__command[2], self.__command[3], self.__command[4]])
             self.__remote.setMagnet(self.__command[5])
             input1 = self.__remote.getPosition('y1')
             input2 = self.__remote.getPosition('y2')
             self.__driver.moveTrackControl(input1, input2)
-            self.__driver.moveGripper(0, self.__remote.getMagnet())
+            #self.__driver.moveGripper(0, self.__remote.getMagnet())
             if input1 != 0 or input2 != 0:
                 print("moving robot")
         except:
             print("moving robot failed")
-        time.sleep(0.1)
-        self.__driver.moveTrackControl(0, 0)
+
+
 
     #function for moving the gripper
     def moveGripper(self):
-        print("movegripper")
         try:
             self.__remote.setJoyPositions([self.__command[1], self.__command[2], self.__command[3], self.__command[4]])
             self.__remote.setMagnet(self.__command[5])
@@ -164,15 +176,14 @@ class Controller:
                 # print("moving gripper")
             if 0.9 <= y2 <= 1.0:
                 print("moving up")
-                self.__servoCamera.moveSpeed(self.__servoCamera.getPosition() - 20, 150)
-                time.sleep(0.1)
+                self.__driver.moveCamera(self.__servoCamera.getPosition() - 20)
             elif -1.0 <= y2 <= -0.9:
                 print("moving down")
-                self.__servoCamera.moveSpeed(self.__servoCamera.getPosition() + 20, 150)
-                time.sleep(0.1)
-            print(y2)
+                self.__driver.moveCamera(self.__servoCamera.getPosition() + 20)
+            time.sleep(0.1)
         except Exception as e:
-            print(e)
+            #   print(e)
+            pass
 
     
     
@@ -203,8 +214,7 @@ class Controller:
 
     # Robot (on music interpretated) LineDance command
     def lineDance(self):
-        lineDance = LineDance(self.__microphone, self.__light, self.__driver)
-        lineDance.run()
+        self.__lineDance.run()
         
     # returns all components
     def getComponents(self):

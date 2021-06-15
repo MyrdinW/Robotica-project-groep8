@@ -1,8 +1,7 @@
 import datetime
-
+import time
 
 class DanceMoves:
-
     def __init__(self, driver):
         self.__driver = driver
 
@@ -16,7 +15,9 @@ class DanceMoves:
 
     def headbang(self):
         self.__driver.moveCameraMax(0)
+        time.sleep(0.5)
         self.__driver.moveCameraMax(1000)
+        time.sleep(0.5)
 
     def updown(self):
         # self.__driver.moveCameraMax()
