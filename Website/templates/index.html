@@ -13,44 +13,44 @@
 </head>
 
 <script type="text/javascript">
-    var intervalID = setInterval(update_values, 200);
+    var intervalID = setInterval(update_values, 50);
     function update_values() {
-      $.getJSON("http://127.0.0.1:5000/api/light/",
+      $.getJSON("http://141.252.29.114:3999/api/light/",
           function (data) {
             $('#light').text(data.light)
           });
 
-    $.getJSON("http://127.0.0.1:5000/api/weight/",
+    $.getJSON("http://141.252.29.114:3999/api/weight/",
       function (data) {
         $('#weight').text(data.weight)
         console.log(data.weight)
       });
 
-      $.getJSON("http://127.0.0.1:5000/api/engine1/",
+      $.getJSON("http://141.252.29.114:3999/api/engine1/",
         function (data) {
           $('#engine1_value').text(data.engine1_value)
           $('#engine1_offset').text(data.engine1_offset)
         });
 
-      $.getJSON("http://127.0.0.1:5000/api/engine2/",
+      $.getJSON("http://141.252.29.114:3999/api/engine2/",
         function (data) {
           $('#engine2_value').text(data.engine1_value)
           $('#engine2_offset').text(data.engine1_offset)
         });
 
-      $.getJSON("http://127.0.0.1:5000/api/servocamera/",
+      $.getJSON("http://141.252.29.114:3999/api/servocamera/",
         function (data) {
           $('#servo_value').text(data.servo_value)
           $('#servo_torque').text(data.servo_torque)
         });
 
-        $.getJSON("http://127.0.0.1:5000/api/servogripper/",
+        $.getJSON("http://141.252.29.114:3999/api/servogripper/",
         function (data) {
           $('#servogripper_value').text(data.servogripper_value)
           $('#servogripper_torque').text(data.servogripper_torque)
         });
 
-      $.get("http://127.0.0.1:5000/api/camera/",
+      $.get("http://141.252.29.114:3999/api/camera/",
         function (data) {
         var image = new Image();
           var base64enc = "data:image/jpg;base64,";
@@ -60,7 +60,7 @@
         });
 
 
-      $.get("http://127.0.0.1:5000/api/microphone/",
+      $.get("http://141.252.29.114:3999/api/microphone/",
         function (data) {
         var image = new Image();
           var base64enc = "data:image/jpg;base64,";
