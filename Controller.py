@@ -19,6 +19,7 @@ from Component.Servo import Servo
 from Component.Weight import Weight
 from Connections.RemoteSocket import RemoteSocket
 from Utils import Utils
+from LightController import LightController
 
 
 # import class that handles movements
@@ -56,6 +57,8 @@ class Controller:
         self.__followLine = FollowLine(self.__camera, self.__utils, self.__driver)
         self.__mask = Mask(self.__camera, self.__utils, self.__driver, self.__light)
         self.__lineDance = LineDance(self.__microphone, self.__light, self.__driver)
+
+        self.__lightController = LightController(self.__light)
 
         # listen to remote on different thread
         # keep update frame in Camera on different thread
@@ -106,6 +109,7 @@ class Controller:
             # mode 1 = drive
             if self.__mode == 1:
                 self.moveRobot()
+                self.__lightController.speedoMeter(self.__engine1.getValue(), self.__engine2.getValue())
                 continue
 
             # mode 2 = move gripper

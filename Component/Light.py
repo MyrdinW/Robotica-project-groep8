@@ -35,6 +35,11 @@ class Light:
         self.__high = int((self.__leds / 3) * 2)
         print("Light initalized")
 
+    def setLights(self, array):
+        for pixel in array:
+            self.__pixels[pixel[0]] = pixel[1]
+        self.__pixels.show()
+
     def setValues(self, low, mid, high):
         """
         Args:
