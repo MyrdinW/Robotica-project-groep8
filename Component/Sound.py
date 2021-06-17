@@ -8,13 +8,15 @@ class Sound:
     Sound handles all sound coming from the robot, it uses the playsound library to play sounds
     """
     def __init__(self):
-        self.__r2d2 = os.listdir("../sounds/r2d2")
-        self.__relevant = os.listdir("../sounds/makes_sense")
-        self.__nsfw = os.listdir("../sounds/nsfs")
+        pass
+        #self.__r2d2 = os.listdir("../sounds/r2d2")
+        #self.__relevant = os.listdir("../sounds/makes_sense")
+        #self.__nsfw = os.listdir("../sounds/nsfs")
 
     # random robot sound
     def randomRobot(self):
-        playsound.playsound(f"sounds/rd2d/{random.choice(self.__r2d2)}")
+        pass
+        #playsound.playsound(f"sounds/rd2d/{random.choice(self.__r2d2)}")
         # os.system(f"mpg321 sounds/r2d2/integratie.mp3")
 
     # random funny sound
@@ -27,4 +29,5 @@ class Sound:
 
 
     def selectSound(self, song):
-        playsound.playsound(f"sounds/{song}.mp3")
+        os.system(f"mpg321 sounds/{song}.mp3")
+        # playsound.playsound(f"sounds/{song}.mp3")

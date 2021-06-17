@@ -5,6 +5,9 @@ from flask_classful import FlaskView
 from flask_cors import CORS
 import warnings
 from Controller import Controller
+from Component.Sound import Sound
+
+sound = Sound()
 
 app = Flask(__name__)
 
@@ -54,10 +57,10 @@ class ComponentsView(FlaskView):
     def weight(self):
         return jsonify(weight=weightObj.getWeight())
 
-    def playSound(self):
+    def sound(self):
         song = request.args.get("song")
-
-        pass
+        sound.selectSound(song)
+        return ""
 
 
 print("component added")

@@ -34,6 +34,9 @@ class LineDance:
         timeEnd = datetime.datetime.now() + timeDelta
         #while datetime.datetime.now() < timeEnd:
         low, mid, high = self.__microphone.getMaxLights()
+        #low = 1
+        #mid = 1
+        #high = 1
         self.__light.setValues(low, mid, high)
         # self.getMovement(low, 0, 0)
         #self.__danceMoves.headbang()

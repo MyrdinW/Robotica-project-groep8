@@ -9,7 +9,7 @@ class Light:
 
     def __init__(self, leds):
         super().__init__()
-        self.__pixelPin = board.D21
+        self.__pixelPin = board.D12
         self.__numPixels = 16
         self.__order = neopixel.RGBW
         self.__pixels = neopixel.NeoPixel(self.__pixelPin, self.__numPixels, brightness=0.2, auto_write=False,
@@ -33,7 +33,6 @@ class Light:
         self.__low = 0
         self.__mid = int(self.__leds / 3)
         self.__high = int((self.__leds / 3) * 2)
-
         print("Light initalized")
 
     def setValues(self, low, mid, high):
@@ -47,14 +46,11 @@ class Light:
         for i in range(self.__numPixels):
             self.__pixels[i] = (0, 0, 0, 0)
 
-        for i in range(0, 5):
-
-            if mid >= i:
-                self.__pixels[i + self.__mid] = self.__colors.get(i)
-
-        for i in range(5, 0):
+        for i in range(1, 6):
             if low >= i:
                 self.__pixels[i] = self.__colors.get(i)
+            if mid >= i:
+                self.__pixels[i + self.__mid] = self.__colors.get(i)
             if high >= i:
                 self.__pixels[i + self.__high] = self.__colors.get(i)
         self.__pixels.show()
@@ -64,6 +60,8 @@ class Light:
             color = (0, 255, 0, 0)
         elif color == "g":
             color = (255, 0, 0, 0)
+        else:
+            color = (255, 255, 0, 0)
         for i in range(len(self.__pixels)):
             self.__pixels[i] = color
         self.__pixels.show()

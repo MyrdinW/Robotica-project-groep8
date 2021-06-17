@@ -42,7 +42,7 @@ class Controller:
         self.__servoCamera = Servo(1, 0)
         self.__servoGripper = Servo(0, 1)
         self.__microphone = Microphone()
-        self.__light = Light(13)
+        self.__light = Light(16)
         self.__camera = Camera()
         self.__magnet = Magnet(16)
         self.__utils = Utils()
@@ -63,6 +63,7 @@ class Controller:
         threading.Thread(target=self.__remoteSocket.listen).start()
         time.sleep(3)
         threading.Thread(target=self.startRobot).start()
+        threading.Thread(target=self.__microphone.update).start()
         #threading.Thread(target=self.__weight.update).start()
 
     # function for listening to the controller
