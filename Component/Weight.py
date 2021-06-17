@@ -26,7 +26,7 @@ class Weight:
                 measures = self.__hx711.get_raw_data()
                 measures = np.asarray(measures)
                 for measure in measures:
-                    result = (measure + 1228161) / 556
+                    result = (measure + 1231210) / 559.5
                     results.append(result)
                     ranges.append(int(result / 50) + 1000)
 

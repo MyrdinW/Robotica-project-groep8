@@ -52,3 +52,6 @@ class Engine:
     def getValue(self):
         return self.value
 
+    def getOffset(self):
+        return self.offset
+

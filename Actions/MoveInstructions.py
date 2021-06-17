@@ -19,6 +19,7 @@ class MoveInstructions:
     # move camera with 1/2 speed
     def moveCamera(self, position):
         try:
+            print(position)
             self.__servoCamera.moveSpeed(position, 500)
         except:
             print("moving gripper failed")

@@ -24,3 +24,7 @@ class Sound:
     # random nsfs sound
     def randomNsfs(self):
         playsound.playsound(f"sounds/nsfs/{random.choice(self.__nsfw)}")
+
+
+    def selectSound(self, song):
+        playsound.playsound(f"sounds/{song}.mp3")

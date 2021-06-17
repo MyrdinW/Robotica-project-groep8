@@ -15,9 +15,9 @@ class Light:
         self.__pixels = neopixel.NeoPixel(self.__pixelPin, self.__numPixels, brightness=0.2, auto_write=False,
                                           pixel_order=self.__order)
 
-        green = [0, 1, 2, 5, 6, 7, 10, 11, 12]
-        yellow = [3, 8, 13]
-        red = [4, 9, 14]
+        green = [5, 4, 3, 6, 7, 8, 15, 14, 13]
+        yellow = [2, 9, 12]
+        red = [1, 10, 11]
         self.__colors = {}
 
         for i in green:
@@ -48,13 +48,15 @@ class Light:
             self.__pixels[i] = (0, 0, 0, 0)
 
         for i in range(0, 5):
-            if low >= i:
-                self.__pixels[i] = self.__colors.get(i)
+
             if mid >= i:
                 self.__pixels[i + self.__mid] = self.__colors.get(i)
+
+        for i in range(5, 0):
+            if low >= i:
+                self.__pixels[i] = self.__colors.get(i)
             if high >= i:
                 self.__pixels[i + self.__high] = self.__colors.get(i)
-
         self.__pixels.show()
 
     def changeLights(self, color):

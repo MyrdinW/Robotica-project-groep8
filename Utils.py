@@ -108,8 +108,8 @@ class Utils:
         hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
         if par == 0:
-            lowerBlue = np.array([99,160,99])
-            upperBlue = np.array([109,255,255])
+            lowerBlue = np.array([97,130,99])
+            upperBlue = np.array([106,220,220])
             #upper_blue = np.array([115, 170, 255])
             #lower_blue = np.array([100, 170, 255])
         elif par == 1:

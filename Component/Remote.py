@@ -1,7 +1,7 @@
 class Remote:
     def __init__(self):
         self.__positions = [0, 0, 0, 0] # 0 = x1, 1 = y1, 2 = x2, 3 = y2  // 0 - 1000
-        self.__deadzone = [0, 439, 449, 1000],[0, 437, 447, 1000],[0, 450, 460, 1000],[0, 429, 439, 1000]
+        self.__deadzone = [100, 439, 449, 900],[100, 437, 447, 900],[100, 450, 460, 900],[100, 429, 439, 900]
         self.__magnet = False
 
     def setJoyPositions(self, positions):

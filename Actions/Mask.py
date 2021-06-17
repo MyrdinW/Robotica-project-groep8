@@ -12,20 +12,20 @@ class Mask:
 
     def run(self):
 
-        # checks if the label has changed
-        class ValueCache(object):
-            def __init__(self, label=None):
-                self.label = label
+#         # checks if the label has changed
+#         class ValueCache(object):
+#             def __init__(self, label=None):
+#                 self.label = label
+#
+#             def update(self, new_label):
+#                 if self.label == new_label:
+#                     return False
+#                 else:
+#                     self.label = new_label
+#                     return True
 
-            def update(self, new_label):
-                if self.label == new_label:
-                    return False
-                else:
-                    self.label = new_label
-                    return True
-
-        value = None
-        new_value = None
+#         value = None
+#         new_value = None
 
         # get frame from the video stream and resize it
         for i in range(500):
@@ -59,14 +59,14 @@ class Mask:
                                 cv2.FONT_HERSHEY_SIMPLEX, 0.45, color, 2)
                     cv2.rectangle(frame, (startX, startY), (endX, endY), color, 2)
 
-                # show the image based on the label that is shown
-                # check if current value has changed and show image accordingly
-                if value != new_value:
-                    value = new_value
-                    if value == "Mask":
-                        self.__light.changeLights(color = (0, 255, 0, 0))
-                    else:
-                        self.__light.changeLights(color = (255, 0, 0, 0))
+#                 # show the image based on the label that is shown
+#                 # check if current value has changed and show image accordingly
+#                 if value != new_value:
+#                     value = new_value
+#                     if value == "Mask":
+# #                         self.__light.changeLights(color = (0, 255, 0, 0))
+#                     else:
+# #                         self.__light.changeLights(color = (255, 0, 0, 0))
 
             except:
                 pass

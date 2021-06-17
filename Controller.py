@@ -60,11 +60,11 @@ class Controller:
         # listen to remote on different thread
         # keep update frame in Camera on different thread
         threading.Thread(target=self.__camera.update).start()
-        time.sleep(3)
         threading.Thread(target=self.__remoteSocket.listen).start()
+        time.sleep(3)
         threading.Thread(target=self.startRobot).start()
-        threading.Thread(target=self.__weight.update()).start()
-       
+        #threading.Thread(target=self.__weight.update).start()
+
     # function for listening to the controller
     def startRobot(self):
         print("start listening to controller")
@@ -89,6 +89,8 @@ class Controller:
             counter = 0
 
             if self.__mode != self.__command[0]:
+                self.__driver.move(0, 0)
+                self.__driver.moveGripper(0)
                 cv2.destroyAllWindows()
                 self.__mode = self.__command[0]
 
@@ -113,7 +115,7 @@ class Controller:
             # mode 3 = following blue car
             if self.__mode == 3:
                 position = self.__servoCamera.getPosition()
-                if 190 < position < 210:
+                if 190 > position or position > 210:
                     self.__driver.moveCamera(200)
                 self.followCar()
                 
@@ -122,7 +124,7 @@ class Controller:
              # mode 4 = following line
             if self.__mode == 4:
                 position = self.__servoCamera.getPosition()
-                if 440 < position < 460:
+                if 440 > position or position > 460:
                     self.__driver.moveCamera(450)
                 self.followLine()
                 continue
@@ -130,9 +132,9 @@ class Controller:
              # mode 5 = mask
             if self.__mode == 5:
                 position = self.__servoCamera.getPosition()
-                if 540 < position < 560:
+                if 540 > position or position > 560:
                     self.__driver.moveCamera(550)
-                self.mask()
+                #self.mask()
                 continue
             
             # mode 6 = dance
@@ -176,10 +178,14 @@ class Controller:
                 # print("moving gripper")
             if 0.9 <= y2 <= 1.0:
                 print("moving up")
-                self.__driver.moveCamera(self.__servoCamera.getPosition() - 20)
+                position = self.__servoCamera.getPosition()
+                print(position)
+                self.__driver.moveCamera(position - 20)
             elif -1.0 <= y2 <= -0.9:
                 print("moving down")
-                self.__driver.moveCamera(self.__servoCamera.getPosition() + 20)
+                position = self.__servoCamera.getPosition()
+                print(position)
+                self.__driver.moveCamera(position + 20)
             time.sleep(0.1)
         except Exception as e:
             #   print(e)

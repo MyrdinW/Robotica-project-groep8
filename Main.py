@@ -1,6 +1,6 @@
 import base64
 import cv2
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_classful import FlaskView
 from flask_cors import CORS
 import warnings
@@ -44,18 +44,25 @@ class ComponentsView(FlaskView):
 
    # returns value and torgue of engine
     def engine1(self):
-        return jsonify(engine1_value=engine1Obj.getValue(), engine_offset=engine1Obj.getOffset())
+        return jsonify(engine1_value=engine1Obj.getValue(), engine1_offset=engine1Obj.getOffset())
 
     # returns value and torgue of engine
     def engine2(self):
-        return jsonify(engine2_value=engine2Obj.getValue(), engine_offset=engine2Obj.getOffset())
+        return jsonify(engine2_value=engine2Obj.getValue(), engine2_offset=engine2Obj.getOffset())
 
     # returns weight in grams
     def weight(self):
         return jsonify(weight=weightObj.getWeight())
 
+    def playSound(self):
+        song = request.args.get("song")
 
+        pass
+
+
+print("component added")
 ComponentsView.register(app, route_base="/api/")
 
 # run site
-app.run(host='0.0.0.0')
+print("running site")
+app.run(host='0.0.0.0', port=3999)

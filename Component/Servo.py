@@ -17,6 +17,7 @@ class Servo:
     def move(self, position):
         self.__servos.move(self.__id, position)
         self.__servos.action()
+        time.sleep(1)
         self.__position = position
 
 
@@ -27,7 +28,8 @@ class Servo:
             position = 11
         self.__position = position
         self.__servos.moveSpeed(self.__id, position, speed)
-        self.__servos.action()
+        #self.__servos.action()
+        time.sleep(1)
         self.__position = self.__servos.readPosition(1)
     
     def moveUnlimited(self, speed):
@@ -44,5 +46,5 @@ class Servo:
         self.__servos.moveInWheelMode(self.__id, 0)
     
     def getPosition(self):
-        print(self.__position)
+        #print(self.__position)
         return self.__position

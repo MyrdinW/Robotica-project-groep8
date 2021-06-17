@@ -36,7 +36,7 @@ class LineDance:
         low, mid, high = self.__microphone.getMaxLights()
         self.__light.setValues(low, mid, high)
         # self.getMovement(low, 0, 0)
-        self.__danceMoves.headbang()
+        #self.__danceMoves.headbang()
         self.__light.resetLights()
         print("mic stopped")
 
