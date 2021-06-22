@@ -28,6 +28,13 @@ class MoveInstructions:
     def moveCameraMax(self, position):
         self.__servoCamera.move(position)
 
+    def moveUp(self):
+        self.moveCameraMax(self.__servoCamera.getPosition() + 20)
+
+    def moveDown(self):
+        self.moveCameraMax(self.__servoCamera.getPosition() - 20)
+
+
     # Moves robot with x and y value of joystick
     def move(self, speed, direction):
         try:

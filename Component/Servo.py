@@ -1,4 +1,5 @@
 import AX12
+import time
 
 class Servo:
     def __init__(self, id, mode):
@@ -29,7 +30,7 @@ class Servo:
         self.__position = position
         self.__servos.moveSpeed(self.__id, position, speed)
         #self.__servos.action()
-        time.sleep(1)
+        
         self.__position = self.__servos.readPosition(1)
     
     def moveUnlimited(self, speed):

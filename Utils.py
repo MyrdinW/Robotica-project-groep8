@@ -5,7 +5,7 @@ distPix = 300
 import tensorflow as tf
 from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
 from tensorflow.keras.preprocessing.image import img_to_array
-import imutils as imutils
+import imutils as imutilscla
 
 class Utils:
     def __init__(self):
@@ -58,12 +58,15 @@ class Utils:
                 locs.append((startX, startY, endX, endY))
 
         # only make a predictions if at least one face was detected
+        outputData = None
+        #print(faces)
         if len(faces) > 0:
             faces = np.array(faces, dtype="float32")
-            self.__interpreter.set_tensor(self.__input_details[0]["index"], faces)
+            self.__interpreter.set_tensor(self.__inputDetails[0]["index"], faces)
             self.__interpreter.invoke()
 
-            outputData = self.__interpreter.get_tensor(self.__output_details[0]["index"])
+            outputData = self.__interpreter.get_tensor(self.__outputDetails[0]["index"])
+            print(outputData)
 
         print(outputData)
         return locs, outputData

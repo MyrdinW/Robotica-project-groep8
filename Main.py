@@ -16,7 +16,7 @@ CORS(app)
 
 # make controller and retrieve different components for API-endpoint
 controller = Controller()
-cameraObj, servoObj, lightObj, engine1Obj, engine2Obj, microphoneObj, weightObj = controller.getComponents()
+cameraObj, servoObj, lightObj, engine1Obj, engine2Obj, microphoneObj, weightObj, powerMeterObj = controller.getComponents()
 warnings.filterwarnings("ignore")
 
 
@@ -61,6 +61,9 @@ class ComponentsView(FlaskView):
         song = request.args.get("song")
         sound.selectSound(song)
         return ""
+
+    def powerMeter(self):
+        return jsonify(power=powerMeterObj.getValue)
 
 
 print("component added")

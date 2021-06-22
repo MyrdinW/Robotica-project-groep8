@@ -15,42 +15,42 @@
 <script type="text/javascript">
     var intervalID = setInterval(update_values, 50);
     function update_values() {
-      $.getJSON("http://141.252.29.114:3999/api/light/",
+      $.getJSON("http://141.252.29.25:3999/api/light/",
           function (data) {
             $('#light').text(data.light)
           });
 
-    $.getJSON("http://141.252.29.114:3999/api/weight/",
+    $.getJSON("http://141.252.29.25:3999/api/weight/",
       function (data) {
         $('#weight').text(data.weight)
         console.log(data.weight)
       });
 
-      $.getJSON("http://141.252.29.114:3999/api/engine1/",
+      $.getJSON("http://141.252.29.25:3999/api/engine1/",
         function (data) {
           $('#engine1_value').text(data.engine1_value)
           $('#engine1_offset').text(data.engine1_offset)
         });
 
-      $.getJSON("http://141.252.29.114:3999/api/engine2/",
+      $.getJSON("http://141.252.29.25:3999/api/engine2/",
         function (data) {
           $('#engine2_value').text(data.engine1_value)
           $('#engine2_offset').text(data.engine1_offset)
         });
 
-      $.getJSON("http://141.252.29.114:3999/api/servocamera/",
+      $.getJSON("http://141.252.29.25:3999/api/servocamera/",
         function (data) {
           $('#servo_value').text(data.servo_value)
           $('#servo_torque').text(data.servo_torque)
         });
 
-        $.getJSON("http://141.252.29.114:3999/api/servogripper/",
+        $.getJSON("http://141.252.29.25:3999/api/servogripper/",
         function (data) {
           $('#servogripper_value').text(data.servogripper_value)
           $('#servogripper_torque').text(data.servogripper_torque)
         });
 
-      $.get("http://141.252.29.114:3999/api/camera/",
+      $.get("http://141.252.29.25:3999/api/camera/",
         function (data) {
         var image = new Image();
           var base64enc = "data:image/jpg;base64,";
@@ -60,7 +60,7 @@
         });
 
 
-      $.get("http://141.252.29.114:3999/api/microphone/",
+      $.get("http://141.252.29.25:3999/api/microphone/",
         function (data) {
         var image = new Image();
           var base64enc = "data:image/jpg;base64,";
@@ -157,37 +157,37 @@
     </span>
    </p>
   </div>
-  <button onclick="location.href='http://141.252.29.114:3999/api/sound?song=Freaklikeme'" type="button">
+  <button onclick="location.href='http://141.252.29.25:3999/api/sound?song=Freaklikeme'" type="button">
      freak like me</button>
-  <button onclick="location.href='http://141.252.29.114:3999/api/sound?song=Giveme25'" type="button">
+  <button onclick="location.href='http://141.252.29.25:3999/api/sound?song=Giveme25'" type="button">
      Give me 25</button>
-  <button onclick="location.href='http://141.252.29.114:3999/api/sound?song=Greetings'" type="button">
+  <button onclick="location.href='http://141.252.29.25:3999/api/sound?song=Greetings'" type="button">
      Greetings</button>
-  <button onclick="location.href='http://141.252.29.114:3999/api/sound?song=HelloBueatiful'" type="button">
+  <button onclick="location.href='http://141.252.29.25:3999/api/sound?song=HelloBueatiful'" type="button">
      Hello beautiful</button>
-  <button onclick="location.href='http://141.252.29.114:3999/api/sound?song=Hitme'" type="button">
+  <button onclick="location.href='http://141.252.29.25:3999/api/sound?song=Hitme'" type="button">
      Hit me</button>
-  <button onclick="location.href='http://141.252.29.114:3999/api/sound?song=Iamyourfather'" type="button">
+  <button onclick="location.href='http://141.252.29.25:3999/api/sound?song=Iamyourfather'" type="button">
      I am your father</button>
 
-  <button onclick="location.href='http://141.252.29.114:3999/api/sound?song=ICallYouUnworthy'" type="button">
+  <button onclick="location.href='http://141.252.29.25:3999/api/sound?song=ICallYouUnworthy'" type="button">
      I call you unworthy</button>
-  <button onclick="location.href='http://141.252.29.114:3999/api/sound?song=Ihaveyounow'" type="button">
+  <button onclick="location.href='http://141.252.29.25:3999/api/sound?song=Ihaveyounow'" type="button">
      I have you now</button>
-  <button onclick="location.href='http://141.252.29.114:3999/api/sound?song=ListenCarefully'" type="button">
+  <button onclick="location.href='http://141.252.29.25:3999/api/sound?song=ListenCarefully'" type="button">
      Listen carefully</button>
-  <button onclick="location.href='http://141.252.29.114:3999/api/sound?song=Murderer'" type="button">
+  <button onclick="location.href='http://141.252.29.25:3999/api/sound?song=Murderer'" type="button">
      Murderer</button>
-  <button onclick="location.href='http://141.252.29.114:3999/api/sound?song=NobodyLikesYou'" type="button">
+  <button onclick="location.href='http://141.252.29.25:3999/api/sound?song=NobodyLikesYou'" type="button">
      Nobody Likes You</button>
 
-  <button onclick="location.href='http://141.252.29.114:3999/api/sound?song=ThereWillBeBlood'" type="button">
+  <button onclick="location.href='http://141.252.29.25:3999/api/sound?song=ThereWillBeBlood'" type="button">
      There Will Be Blood</button>
-    <button onclick="location.href='http://141.252.29.114:3999/api/sound?song=R2O2'" type="button">
+    <button onclick="location.href='http://141.252.29.25:3999/api/sound?song=R2O2'" type="button">
      R2D2</button>
-  <button onclick="location.href='http://141.252.29.114:3999/api/sound?song=Whatisyourmajormalfunction'" type="button">
+  <button onclick="location.href='http://141.252.29.25:3999/api/sound?song=Whatisyourmajormalfunction'" type="button">
      What is your major malfunction</button>
-  <button onclick="location.href='http://141.252.29.114:3999/api/sound?song=YouvebeenWarned'" type="button">
+  <button onclick="location.href='http://141.252.29.25:3999/api/sound?song=YouvebeenWarned'" type="button">
      You've been warnedt</button>
 
   <script>

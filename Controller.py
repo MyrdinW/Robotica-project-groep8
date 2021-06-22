@@ -1,22 +1,24 @@
 import threading
 import time
 import cv2
+# import Action classes
 from Actions.Dance import Dance
 from Actions.FollowColor import FollowColor
 from Actions.FollowLine import FollowLine
 from Actions.LineDance import LineDance
+from Actions.Dance import Dance
 from Actions.Mask import Mask
-# import Action classes
 from Actions.MoveInstructions import MoveInstructions
+# import all components
 from Component.Camera import Camera
 from Component.Engine import Engine
 from Component.Light import Light
 from Component.Magnet import Magnet
 from Component.Microphone import Microphone
-# import all components
 from Component.Remote import Remote
 from Component.Servo import Servo
 from Component.Weight import Weight
+from Component.PowerMeter import PowerMeter
 from Connections.RemoteSocket import RemoteSocket
 from Utils import Utils
 from LightController import LightController
@@ -43,13 +45,14 @@ class Controller:
         self.__servoCamera = Servo(1, 0)
         self.__servoGripper = Servo(0, 1)
         self.__microphone = Microphone()
-        self.__light = Light(16)
+        self.__light = Light(78)
         self.__camera = Camera()
         self.__magnet = Magnet(16)
         self.__utils = Utils()
         self.__remote = Remote()
         self.__remoteSocket = RemoteSocket()
         self.__weight = Weight()
+        self.__powerMeter = PowerMeter()
         self.__driver = MoveInstructions(self.__servoGripper, self.__servoCamera, self.__magnet, self.__engine1, self.__engine2)
         
         self.__command = None
@@ -57,7 +60,7 @@ class Controller:
         self.__followLine = FollowLine(self.__camera, self.__utils, self.__driver)
         self.__mask = Mask(self.__camera, self.__utils, self.__driver, self.__light)
         self.__lineDance = LineDance(self.__microphone, self.__light, self.__driver)
-
+        self.__dance = Dance(self.__driver, self.__microphone)
         self.__lightController = LightController(self.__light)
 
         # listen to remote on different thread
@@ -74,6 +77,7 @@ class Controller:
         print("start listening to controller")
         # thread = None
         counter = 0
+        sleeping = False
         while True:
             self.__command = self.__remoteSocket.getCommand()
             self.__remoteSocket.clearCommand()
@@ -87,23 +91,31 @@ class Controller:
 
                 time.sleep(0.01)
                 continue 
+            else:
+                counter = 0
             
-
-            #print(delta)
-            counter = 0
 
             if self.__mode != self.__command[0]:
                 self.__driver.move(0, 0)
                 self.__driver.moveGripper(0)
+                self.__dance.stop()
+                self.__dance.reset()
                 cv2.destroyAllWindows()
                 self.__mode = self.__command[0]
 
 
             # mode 0 = sleep
             if self.__mode == 0:
-                self.__driver.move(0, 0)
-                self.__driver.moveGripper(0)
-                time.sleep(0.5)
+                if sleeping == False:
+                    self.__driver.move(0, 0)
+                    self.__driver.moveGripper(0)
+                    sleeping = True
+                #self.__lightController.rainbow.cycle()
+                #print(self.__powerMeter.getValue())
+                self.__lightController.knightrider.cycle()
+                time.sleep(0.2)
+                
+                
                 continue
             
             # mode 1 = drive
@@ -136,15 +148,18 @@ class Controller:
             
              # mode 5 = mask
             if self.__mode == 5:
-                position = self.__servoCamera.getPosition()
-                if 540 > position or position > 560:
-                    self.__driver.moveCamera(550)
-                #self.mask()
+                #position = self.__servoCamera.getPosition()
+                #if 540 > position or position > 560:
+                #    self.__driver.moveCamera(550)
+                self.mask()
                 continue
             
             # mode 6 = dance
             if self.__mode == 6:
+                print("mode 6")
+                #self.__lightController.knightrider()
                 #eigen muziek
+                self.__dance.run()
                 #self.dance()
                 continue
             
@@ -214,7 +229,6 @@ class Controller:
 
     # function for detecting is someone wears a mask
     def mask(self):
-        print("mask")
         self.__mask.run()
         # cv2.destroyAllWindows()
 
@@ -226,7 +240,8 @@ class Controller:
     # Robot (on music interpretated) LineDance command
     def lineDance(self):
         self.__lineDance.run()
+
         
     # returns all components
     def getComponents(self):
-        return self.__camera, self.__servoGripper, self.__light, self.__engine1, self.__engine2, self.__microphone, self.__weight
+        return self.__camera, self.__servoGripper, self.__light, self.__engine1, self.__engine2, self.__microphone, self.__weight, self.__powerMeter

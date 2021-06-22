@@ -22,7 +22,7 @@ class RemoteSocket:
             conn, addr = self.s.accept()
             #payload = self.s.recv(32) #UDP
             payload = conn.recv(32)
-            print(payload)
+            #print(payload)
             # print(payload)
             #if len(payload) != 29:
             #    return
