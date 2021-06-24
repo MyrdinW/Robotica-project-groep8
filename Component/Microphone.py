@@ -57,8 +57,8 @@ class Microphone:
         while True:
             self.__data = self.__stream.read(self.__chunk)
             matrix = self.calculate_levels(self.__data, self.__chunk, self.__rate)
-            self.__nlows = int(matrix[0] * 2)
-            self.__nmids = int(matrix[1] * 5)
+            self.__nlows = int(matrix[0] * 1.6)
+            self.__nmids = int(matrix[1] * 3)
             self.__nhighs = int(matrix[2] * 10)
             if(self.__nlows) > 5:
                 self.__nlows = 5

@@ -15,6 +15,7 @@ class Knightrider:
         self.__start = 41
         self.__backwards = False
 
+
     def cycle(self):
         output = []
         if self.__led1 >= self.__LedRight:

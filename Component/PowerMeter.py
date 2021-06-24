@@ -12,8 +12,10 @@ class PowerMeter:
         self.__channel = AnalogIn(self.__mcp, MCP.P0)
 
         self.__calculatedValue = 5.679862
-        self.__voltage = 0
+        self.__voltage = 69
 
     def getValue(self):
         self.__voltage = self.__channel.voltage * self.__calculatedValue
+        if self.__voltage < 10.5:
+            print(f"low voltage warning! voltage = {self.__voltage}")
         return self.__voltage

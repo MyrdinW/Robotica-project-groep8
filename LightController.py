@@ -1,5 +1,6 @@
 from ledeffects.Knightrider import Knightrider
 from ledeffects.Rainbow import Rainbow
+from ledeffects.FireEffect import FireEffect
 
 import datetime
 import time
@@ -23,6 +24,7 @@ class LightController:
 
         self.rainbow = Rainbow(light)
         self.knightrider = Knightrider(light)
+        self.fireEffect = FireEffect(light)
 
         
 

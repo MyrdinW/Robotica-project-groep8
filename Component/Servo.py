@@ -49,3 +49,6 @@ class Servo:
     def getPosition(self):
         #print(self.__position)
         return self.__position
+
+    #def readSpeed(self):
+    #    return self.__servos.readSpeed(self.__id)

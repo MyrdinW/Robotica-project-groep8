@@ -41,7 +41,7 @@ class Utils:
 
             # filter out weak detections by ensuring the confidence is
             # greater than the minimum confidence
-            if confidence > 0.5:
+            if confidence > 0.8:
                 box = detections[0, 0, i, 3:7] * np.array([w, h, w, h])
                 (startX, startY, endX, endY) = box.astype("int")
                 (startX, startY) = (max(0, startX), max(0, startY))
@@ -116,8 +116,9 @@ class Utils:
             #upper_blue = np.array([115, 170, 255])
             #lower_blue = np.array([100, 170, 255])
         elif par == 1:
-            lowerBlue = np.array([0,0,0])
-            upperBlue = np.array([255,100,100])
+            lowerBlue = np.array([80,0,0])
+
+            upperBlue = np.array([140,110,100])
             
         maskBlue = cv2.inRange(hsv, lowerBlue, upperBlue)
 

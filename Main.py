@@ -63,7 +63,7 @@ class ComponentsView(FlaskView):
         return ""
 
     def powerMeter(self):
-        return jsonify(power=powerMeterObj.getValue)
+        return jsonify(power=powerMeterObj.getValue())
 
 
 print("component added")

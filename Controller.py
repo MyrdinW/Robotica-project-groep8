@@ -23,7 +23,6 @@ from Connections.RemoteSocket import RemoteSocket
 from Utils import Utils
 from LightController import LightController
 
-
 # import class that handles movements
 # from Component.Sound import Sound
 
@@ -50,18 +49,22 @@ class Controller:
         self.__magnet = Magnet(16)
         self.__utils = Utils()
         self.__remote = Remote()
+        self.__startedknight = False
         self.__remoteSocket = RemoteSocket()
         self.__weight = Weight()
         self.__powerMeter = PowerMeter()
+
         self.__driver = MoveInstructions(self.__servoGripper, self.__servoCamera, self.__magnet, self.__engine1, self.__engine2)
-        
+        self.__lightController = LightController(self.__light)
+
         self.__command = None
         self.__followColor = FollowColor(self.__camera, self.__utils, self.__driver)
         self.__followLine = FollowLine(self.__camera, self.__utils, self.__driver)
         self.__mask = Mask(self.__camera, self.__utils, self.__driver, self.__light)
-        self.__lineDance = LineDance(self.__microphone, self.__light, self.__driver)
+        self.__lineDance = LineDance(self.__microphone, self.__light, self.__lightController, self.__driver)
         self.__dance = Dance(self.__driver, self.__microphone)
-        self.__lightController = LightController(self.__light)
+        
+        #self.__knight = KnightRiderDance(self.__driver, self.__microphone, self.__light)
 
         # listen to remote on different thread
         # keep update frame in Camera on different thread
@@ -76,23 +79,21 @@ class Controller:
     def startRobot(self):
         print("start listening to controller")
         # thread = None
-        counter = 0
+        timeoutCounter = 0
         sleeping = False
         while True:
-            self.__command = self.__remoteSocket.getCommand()
+            response = self.__remoteSocket.getCommand()
             self.__remoteSocket.clearCommand()
 
-            if self.__command is None:
-                counter += 1
-                if counter == 20:
+            if response is None:
+                timeoutCounter += 1
+                if timeoutCounter == 20:
                     print("lagging")
                     self.__driver.move(0, 0)
                     self.__driver.moveGripper(0)
-
-                time.sleep(0.01)
-                continue 
             else:
-                counter = 0
+                self.__command = response
+                timeoutCounter = 0
             
 
             if self.__mode != self.__command[0]:
@@ -102,18 +103,20 @@ class Controller:
                 self.__dance.reset()
                 cv2.destroyAllWindows()
                 self.__mode = self.__command[0]
+                sleeping = False
 
 
             # mode 0 = sleep
             if self.__mode == 0:
                 if sleeping == False:
                     self.__driver.move(0, 0)
-                    self.__driver.moveGripper(0)
-                    sleeping = True
-                #self.__lightController.rainbow.cycle()
-                #print(self.__powerMeter.getValue())
-                self.__lightController.knightrider.cycle()
-                time.sleep(0.2)
+                    #self.__driver.moveGripper(0)
+                    #if self.__servoGripper.readSpeed() == 0:
+                    #    sleeping = True
+                self.__lightController.rainbow.cycle()
+
+                time.sleep(0.01)
+                
                 
                 
                 continue
@@ -156,17 +159,17 @@ class Controller:
             
             # mode 6 = dance
             if self.__mode == 6:
-                print("mode 6")
                 #self.__lightController.knightrider()
                 #eigen muziek
-                self.__dance.run()
-                #self.dance()
+                self.dance()
                 continue
             
             # mode 7 = linedacne
             if self.__mode == 7:
                 self.lineDance()
                 continue
+                
+            time.sleep(0.1)
             
     #function for moving the robot
     def moveRobot(self):
@@ -234,14 +237,14 @@ class Controller:
 
     # Robot (hardcoded) dance command
     def dance(self):
-        dance = Dance()
-        #dance.run()
+        self.__dance.run()
+        self.__lightController.knightrider.cycle()
 
     # Robot (on music interpretated) LineDance command
     def lineDance(self):
         self.__lineDance.run()
 
-        
+
     # returns all components
     def getComponents(self):
         return self.__camera, self.__servoGripper, self.__light, self.__engine1, self.__engine2, self.__microphone, self.__weight, self.__powerMeter
